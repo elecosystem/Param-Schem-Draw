@@ -11,17 +11,19 @@ import SchemDraw.elements as e
 # Import library to parametrize the used of SchemDraw
 from ParamSchemDraw import electricComponent, resistor, vSource
 
+# to control the number of plots
+import matplotlib.pyplot as plt
 
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
 
+# Image extension
+extension = '.png'
+
 ################################################################################
 # Circuit Example
 
-def DC_001(params):
-
-    print params
-
+def DC_001(params, ekey):
     # Parameters
     V1 = vSource(params['$V_1$'], '$V_1$')
     V2 = vSource(params['$V_2$'], '$V_2$')
@@ -31,7 +33,6 @@ def DC_001(params):
     R3 = resistor(params['$R_3$'], '$R_3$')
     R4 = resistor(params['$R_4$'], '$R_4$')
 
-    print R1.value
     # new drawing
     d = schem.Drawing()
 
@@ -72,10 +73,15 @@ def DC_001(params):
     d.add( e.DOT )
     d.add( e.GND )
 
-    # draw the circuit, but doesn't show (doesn't matter, matplotlib is running headless)
+    # draw the circuit, but don't show
     d.draw(showplot = False)
 
-    # save schematic
-    d.save(path + '1.png' )
-
-
+    # save schematic (full path + Circuit ID + parametrize identifier + extension)
+    filename = 'DC_001_' + str(ekey) + extension
+    d.save(path + filename)
+    
+    # close all open plots
+    plt.close('all')
+    
+    # return filename
+    return filename

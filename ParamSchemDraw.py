@@ -7,6 +7,7 @@
     Author: Pedro Martins
 
 '''
+
 # Classes to work with eletrical components
 class electricComponent(object):
     def __init__(self, value, label = ""):
@@ -97,6 +98,41 @@ class vSource(electricComponent):
              return str( self._value / (1 * 10 ** -3) ) + '$m V$'
         elif( self._value >= 1 * 10 ** -6):
              return str( self._value / (1 * 10 ** -6) ) + '$\mu V$'
+        else:
+            raise ValueError
+
+    @property
+    def label(self):
+        return self._label
+
+    @property
+    def schem(self):
+        return self._schem
+
+    @schem.setter
+    def schem(self, schematic):
+        self._schem = schematic
+
+
+class iSource(electricComponent):
+    def __init__(self, value, label= ""):
+        if value != 0:
+            super(iSource, self).__init__(value, label)
+        else:
+            raise ValueError
+
+    @property
+    def value(self):
+        if( self._value >= 1 * 10 ** 6 ):
+            return str( (self._value % (1 * 10 ** 6)) * 10 ** -6 + (self._value / (1 * 10 ** 6)) ) + '$M A$'
+        elif( self._value >= 1 * 10 ** 3 ):
+            return str( (self._value % (1 * 10 ** 3)) * 10 ** -3 + (self._value / (1 * 10 ** 3)) ) + '$K A$'
+        elif( self._value >= 1 ):
+            return str(self._value) + '$A$'
+        elif( self._value >= 1 * 10 ** -3):
+             return str( self._value / (1 * 10 ** -3) ) + '$m A$'
+        elif( self._value >= 1 * 10 ** -6):
+             return str( self._value / (1 * 10 ** -6) ) + '$\mu A$'
         else:
             raise ValueError
 

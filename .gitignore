@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# My additions
+.MEGUA_DATABASE.sqlite
+IMAGENS
+*.sagews
