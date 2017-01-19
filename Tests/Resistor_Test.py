@@ -50,6 +50,7 @@ R36 = resistor(0.009999)
 R37 = resistor(0.0009999)
 
 # The printing must be formatted with Engeneering Notation and latex symbols
+print R0.value
 print R1.value
 print R2.value
 print R3.value
