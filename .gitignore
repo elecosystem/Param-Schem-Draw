@@ -92,3 +92,4 @@ ENV/
 .MEGUA_DATABASE.sqlite
 IMAGENS
 *.sagews
+*.py~
