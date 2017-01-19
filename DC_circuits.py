@@ -1,6 +1,8 @@
 # import matplotlib and make it run headless, otherwise in SchewDraw it will return and error
 # when tries to connect to Xserver and $Display environmental variable
+# matplotlib.pyplot enables controlling the number of active plots
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 mpl.use('Agg')
 
 #Documentation:  http://cdelker.bitbucket.org/SchemDraw.html
@@ -11,8 +13,7 @@ import SchemDraw.elements as e
 # Import library to parametrize the used of SchemDraw
 from ParamSchemDraw import electricComponent, resistor, vSource
 
-# to control the number of plots
-import matplotlib.pyplot as plt
+
 
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
