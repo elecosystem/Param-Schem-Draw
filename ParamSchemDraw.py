@@ -1,5 +1,5 @@
 '''
-    ParamSchemDraw : Parametrized Schem Draw
+    ParamSchemDraw : Parametrized Schematic Draw
 
     This file describes a set of class and methods to ease the of use of SchewDraw for
     paramerized circuit draw
@@ -8,15 +8,20 @@
 
 '''
 
+from numbers import Number, Complex
+from decimal import Decimal
+from math import floor, log10
+
+def round2Precision(x, p):
+    n = floor(log10(x)) + 1 - p
+    print n
+    return round(10 ** (-n) * x) * 10 ** n
 
 # Classes to work with eletrical components
 class electricComponent(object):
-    def __init__(self, value, label = ""):
-        self._value = value
-        self._label = label
-
     @staticmethod
     def enginnerNotation(value, units=""):
+        value = round2Precision(value, 3)
         if( value >= 1 * 10 ** 6 ):
             return str( (value % (1 * 10 ** 6)) * 10 ** -6 + (value / (1 * 10 ** 6)) ) + '$M$'  + units
         elif( value >= 1 * 10 ** 3 ):
@@ -31,12 +36,23 @@ class electricComponent(object):
             raise ValueOutsideReasonableBounds
 
 
+
 class resistor(electricComponent):
     def __init__(self, value, label= ""):
-        if value > 0:
-            super(resistor, self).__init__(value, label)
+        if resistor.isValidResistor(value):
+            self._value = value
+            self._label = label
         else:
             raise NonPositiveResistance
+
+    @staticmethod
+    def isValidResistor(R):
+        assert R != None
+        if isinstance(R, (Number, Decimal)) and ~isinstance(R, Complex):
+            if R > 0:
+                return True
+        return False
+
     @property
     def value(self):
         return electricComponent.enginnerNotation(self._value, '$\Omega$')
@@ -111,6 +127,59 @@ class resistor(electricComponent):
                 req = req * arg /(req + arg)
         return resistor.enginnerNotation(req)
 
+    @staticmethod
+    def currentDivider(I, R1, R2):
+        '''
+            ---I----+--------+--o
+                    |        |
+                    R1      R2
+                    |        |
+                    +--GND---+--o
+
+        where the output is the current in the resistor R2
+        '''
+        if ~isinstance(I, iSource):
+            assert iSource.isValidISource(I)
+        else:
+            I = I.value
+        if ~isinstance(R1, resistor):
+            assert resistor.isValidResistor(R1)
+        else:
+            R1 = R1.value
+        if ~isinstance(R1, resistor):
+            assert resistor.isValidResistor(R2)
+        else:
+            R2 = R2.values
+
+        return (R1 + R2) / R2 * I
+
+    @staticmethod
+    def voltageDivider(V, R1, R2):
+        '''
+            ---V----R1---+--o
+                         |
+                         R2
+                         |
+            -------GND---+--o
+
+        where the output is the voltage drop across the resistor R2
+        '''
+        if ~isinstance(V, vSource):
+            assert vSource.isValidVSource(V)
+        else:
+            V = V.value
+        if ~isinstance(R1, resistor):
+            assert resistor.isValidResistor(R1)
+        else:
+            R1 = R1.value
+        if ~isinstance(R1, resistor):
+            assert resistor.isValidResistor(R2)
+        else:
+            R2 = R2.values
+
+        return R2 / (R1 + R2) * V
+
+
 '''
     def series(self, *args):
         assert len(args) > 0, "The number of is incorrect."
@@ -133,10 +202,19 @@ class resistor(electricComponent):
 
 class vSource(electricComponent):
     def __init__(self, value, label= ""):
-        if value != 0:
-            super(vSource, self).__init__(value, label)
+        if vSource.isValidVSource(value):
+            self._value = value
+            self._label = label
         else:
-            raise ValueError
+            raise InvalidIndepentSource
+
+    @staticmethod
+    def isValidVSource(V):
+        assert V != None
+        if isinstance(V, (Number, Decimal)):
+            if V != 0:
+                return True
+        return False
 
     @property
     def value(self):
@@ -168,10 +246,19 @@ class vSource(electricComponent):
 
 class iSource(electricComponent):
     def __init__(self, value, label= ""):
-        if value != 0:
-            super(iSource, self).__init__(value, label)
+        if iSource.isValidISource(value):
+            self._value = value
+            self._label = label
         else:
-            raise ValueError
+            raise InvalidIndepentSource
+
+    @staticmethod
+    def isValidISource(I):
+        assert I != None
+        if isinstance(I, (Number, Decimal)):
+            if I != 0:
+                return True
+        return False
 
     @property
     def value(self):
@@ -210,3 +297,6 @@ class ValueOutsideReasonableBounds(ValueError):
     """ The value is not reasonable """
     pass
 
+class InvalidIndepentSource(ValueError):
+    """ The independent voltage/current source value can't be zero """
+    pass
