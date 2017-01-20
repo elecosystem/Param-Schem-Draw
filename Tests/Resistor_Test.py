@@ -89,3 +89,13 @@ print R35.value
 print R36.value
 print R37.value
 
+
+# Series resistor
+print "\n\n\n"
+print resistor.e24()
+print resistor.parallel(R1, R2)
+print resistor.parallel(R1, 30, 40, R2, 1)
+print resistor.parallel(1, 2)
+print resistor.parallel(2, 2)
+print resistor.parallel(1, 2, 3)
+print resistor.parallel(1, 2, 3, 4)

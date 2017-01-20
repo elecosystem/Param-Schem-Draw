@@ -8,18 +8,50 @@
 
 '''
 
+
 # Classes to work with eletrical components
 class electricComponent(object):
     def __init__(self, value, label = ""):
         self._value = value
         self._label = label
 
+    @staticmethod
+    def enginnerNotation(value, units=""):
+        if( value >= 1 * 10 ** 6 ):
+            return str( (value % (1 * 10 ** 6)) * 10 ** -6 + (value / (1 * 10 ** 6)) ) + '$M$'  + units
+        elif( value >= 1 * 10 ** 3 ):
+            return str( (value % (1 * 10 ** 3)) * 10 ** -3 + (value / (1 * 10 ** 3)) ) + '$K$' + units
+        elif( value >= 1 ):
+            return str(value) + units
+        elif( value >= 1 * 10 ** -3):
+             return str( value / (1 * 10 ** -3) ) + '$m$' + units
+        elif( value >= 1 * 10 ** -6):
+             return str( value / (1 * 10 ** -6) ) + '$\mu$' + units
+        else:
+            raise ValueOutsideReasonableBounds
+
+
 class resistor(electricComponent):
     def __init__(self, value, label= ""):
         if value > 0:
             super(resistor, self).__init__(value, label)
         else:
-            raise ValueError
+            raise NonPositiveResistance
+    @property
+    def value(self):
+        return electricComponent.enginnerNotation(self._value, '$\Omega$')
+
+    @property
+    def label(self):
+        return self._label
+
+    @property
+    def schem(self):
+        return self._schem
+
+    @schem.setter
+    def schem(self, schematic):
+        self._schem = schematic
 
     # E24 class resistor values
     __e24 =( 1.0 , 10 ,	100 , 1.0 * 10 ** 3 , 10 * 10 ** 3 , 100 * 10 ** 3 , 1.0 * 10 ** 6,
@@ -48,36 +80,56 @@ class resistor(electricComponent):
              9.1 , 91 ,	910 , 9.1 * 10 ** 3 , 91 * 10 ** 3 , 910 * 10 ** 3 , 9.1 * 10 ** 6)
 
     @staticmethod
-    def e24(cls):
+    def e24():
         return resistor.__e24
 
-    @property
-    def value(self):
-        if( self._value >= 1 * 10 ** 6 ):
-            return str( (self._value % (1 * 10 ** 6)) * 10 ** -6 + (self._value / (1 * 10 ** 6)) ) + '$M \Omega$'
-        elif( self._value >= 1 * 10 ** 3 ):
-            return str( (self._value % (1 * 10 ** 3)) * 10 ** -3 + (self._value / (1 * 10 ** 3)) ) + '$K \Omega$'
-        elif( self._value >= 1 ):
-            return str(self._value) + '$\Omega$'
-        elif( self._value >= 1 * 10 ** -3):
-             return str( self._value / (1 * 10 ** -3) ) + '$m \Omega$'
-        elif( self._value >= 1 * 10 ** -6):
-             return str( self._value / (1 * 10 ** -6) ) + '$\mu \Omega$'
+    @staticmethod
+    def series(*args):
+        assert len(args) > 1, "The number of is incorrect. A series association must at least have 2"
+        if isinstance(args[0], resistor):
+            req = float(args[0]._value)
         else:
-            raise ValueError
+            req = float(args[0])
+        for arg in args[1::]:
+            if isinstance(arg, resistor):
+                req = req + arg._value
+            else:
+                req = req + arg
+        return resistor.enginnerNotation(req)
 
-    @property
-    def label(self):
-        return self._label
+    @staticmethod
+    def parallel(*args):
+        assert len(args) > 1, "The number of is incorrect. A parallel association must at least have 2"
+        if isinstance(args[0], resistor):
+            req = float(args[0]._value)
+        else:
+            req = float(args[0])
+        for arg in args[1::]:
+            if isinstance(arg, resistor):
+                req = req * arg._value /(req + arg._value)
+            else:
+                req = req * arg /(req + arg)
+        return resistor.enginnerNotation(req)
 
-    @property
-    def schem(self):
-        return self._schem
+'''
+    def series(self, *args):
+        assert len(args) > 0, "The number of is incorrect."
+        req = float(self._value)
+        for arg in args[1::]:
+            if ~isinstance(arg, resistor):
+                raise TypeError
+            req = req + arg._value
+        return resistor.enginnerNotation(req)
 
-    @schem.setter
-    def schem(self, schematic):
-        self._schem = schematic
-
+    def parallel(self, *args):
+        assert len(args) > 0, "The number of is incorrect."
+        req = float(self._value)
+        for arg in args[1::]:
+            if ~isinstance(arg, resistor):
+                raise TypeError
+            req = req + arg._value
+        return resistor.enginnerNotation(req)
+'''
 
 class vSource(electricComponent):
     def __init__(self, value, label= ""):
@@ -149,4 +201,12 @@ class iSource(electricComponent):
         self._schem = schematic
 
 
+# Exceptions throw by class
+class NonPositiveResistance(ValueError):
+    """ Resistance is not a positive value """
+    pass
+
+class ValueOutsideReasonableBounds(ValueError):
+    """ The value is not reasonable """
+    pass
 
