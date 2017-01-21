@@ -10,7 +10,70 @@
 
 from numbers import Number, Complex
 from decimal import Decimal
-from math import floor, log10
+from math import floor, log10, pow
+
+def frexp10(x):
+    """
+    Return mantissa and exponent (base 10), similar to base-2 frexp()
+    :param x: floating point number
+    :return: tuple (mantissa, exponent)
+    """
+    exp = floor(log10(x))
+    return x/10**exp, exp
+
+
+def eng_notate(x, d=3, suff=True, neg_ok=False):
+    # Practical component suffixes
+    _SUFFIX = ["p", "n", "u", "m", "", "k", "M", "G"]
+    # Offset to unit multiplier (no suffix)
+
+    _UNIT_OFFSET = 4
+
+    sign = ""
+    if neg_ok and x < 0.0:
+        sign = "-"
+        x = -x
+    #if x < 0.0 or not isfinite(x):
+    #    return "RangeErr"
+    if x == 0:
+        return "0.0"
+    # Normalize the number and round to get d significant digits
+    mant, exp = frexp10(x)
+    r = round(mant,d-1)
+    # Convert back to original scale
+    x = r * pow(10.0, exp)
+    # Get integer exponent to group by factors of 1000
+    p = int(floor(log10(x)))
+    p3 = p // 3
+    # Get root value string
+    value = x / pow(10.0, 3*p3)
+    numStr = "{:f}".format(value)
+    # Slice to length, avoid trailing "."
+    if numStr[d] != ".":
+        numStr = numStr[0:d+1]
+    else:
+        numStr = numStr[0:d]
+    # Prepend '-' if necessary
+    numStr = sign + numStr
+    if suff:
+        # Append units suffix
+        p3i = p3 + _UNIT_OFFSET
+        if p3i < 0:
+            # Smaller than lowest unit
+            return "<1{}".format(_SUFFIX[0])
+        if p3i > len(_SUFFIX)-1:
+            # Larger than largest unit
+            return ">999{}".format(_SUFFIX[-1])
+        else:
+            s = _SUFFIX[p3i]
+            return "{}{}".format(numStr, s)
+    else:
+        # No suffix, return floating point string
+        if p3 != 0:
+            return "{}e{:d}".format(numStr, 3*p3)
+        else:
+            return "{}".format(numStr)
+
 
 def round2Precision(x, p):
     n = floor(log10(x)) + 1 - p
@@ -20,21 +83,74 @@ def round2Precision(x, p):
 # Classes to work with eletrical components
 class electricComponent(object):
     @staticmethod
-    def enginnerNotation(value, units=""):
-        value = round2Precision(value, 3)
-        if( value >= 1 * 10 ** 6 ):
-            return str( (value % (1 * 10 ** 6)) * 10 ** -6 + (value / (1 * 10 ** 6)) ) + '$M$'  + units
-        elif( value >= 1 * 10 ** 3 ):
-            return str( (value % (1 * 10 ** 3)) * 10 ** -3 + (value / (1 * 10 ** 3)) ) + '$K$' + units
-        elif( value >= 1 ):
-            return str(value) + units
-        elif( value >= 1 * 10 ** -3):
-             return str( value / (1 * 10 ** -3) ) + '$m$' + units
-        elif( value >= 1 * 10 ** -6):
-             return str( value / (1 * 10 ** -6) ) + '$\mu$' + units
-        else:
-            raise ValueOutsideReasonableBounds
+    def enginnerNotation(value, units="", p=3):
+        '''
+            Formats a number to engineering notation with p significant digits
+        '''
+        assert value != 0
+        # Practical component suffixes
+        _SUFFIX = ["p", "n", "u", "m", "", "k", "M", "G"]
+        # Offset to unit multiplier (no suffix)
 
+        _UNIT_OFFSET = 4
+
+        # For negative cases
+        sign = ""
+        if value < 0:
+            sign = "-"
+            value = -value
+
+        # Exponent and mantissa
+        exp = floor(log10(value))
+        mant = value / 10 ** exp
+
+        # Get significant digits
+        trunc = round(mant, p-1)
+        truncPrec = trunc * 10 ** exp
+
+        engExp = int(exp) // 3
+        engValue = truncPrec / (10 ** (3 * engExp))
+        engStr = "{:f}".format(engValue)
+
+        # Slice to length, avoid trailing "."
+        if engStr[p] != ".":
+            engStr = engStr[0:p+1]
+        else:
+            engStr = engStr[0:p]
+        # Prepend '-' if necessary
+        engStr = sign + engStr
+
+        engPrefix = engExp + _UNIT_OFFSET
+        #if engPrefix < 0:
+        #    # Smaller than lowest unit
+        #    return "<1{}".format(_SUFFIX[0])
+        #if p3i > len(_SUFFIX)-1:
+            # Larger than largest unit
+        #    return ">999{}".format(_SUFFIX[-1])
+        #else:
+        s = _SUFFIX[engPrefix]
+        return "{}{}{}".format(engStr, s, units)
+
+
+    '''
+            return eng_notate(value) + units
+
+
+
+            value = round2Precision(value, 3)
+            if( value >= 1 * 10 ** 6 ):
+                return str( (value % (1 * 10 ** 6)) * 10 ** -6 + (value / (1 * 10 ** 6)) ) + '$M$'  + units
+            elif( value >= 1 * 10 ** 3 ):
+                return str( (value % (1 * 10 ** 3)) * 10 ** -3 + (value / (1 * 10 ** 3)) ) + '$K$' + units
+            elif( value >= 1 ):
+                return str(value) + units
+            elif( value >= 1 * 10 ** -3):
+                 return str( value / (1 * 10 ** -3) ) + '$m$' + units
+            elif( value >= 1 * 10 ** -6):
+                 return str( value / (1 * 10 ** -6) ) + '$\mu$' + units
+            else:
+                raise ValueOutsideReasonableBounds
+    '''
 
 
 class resistor(electricComponent):
@@ -55,7 +171,8 @@ class resistor(electricComponent):
 
     @property
     def value(self):
-        return electricComponent.enginnerNotation(self._value, '$\Omega$')
+        return eng_notate(self._value)
+        #return electricComponent.enginnerNotation(self._value, '$\Omega$')
 
     @property
     def label(self):

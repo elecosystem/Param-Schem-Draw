@@ -1,9 +1,8 @@
 # import matplotlib and make it run headless, otherwise in SchewDraw it will return and error
 # when tries to connect to Xserver and $Display environmental variable
 # matplotlib.pyplot enables controlling the number of active plots
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-mpl.use('Agg')
+import matplotlib
+matplotlib.use('Agg')
 
 #Documentation:  http://cdelker.bitbucket.org/SchemDraw.html
 # import SchemDraw
@@ -80,9 +79,9 @@ def DC_001(params, ekey):
     # save schematic (full path + Circuit ID + parametrize identifier + extension)
     filename = 'DC_001_' + str(ekey) + extension
     d.save(path + filename)
-    
+
     # close all open plots
-    plt.close('all')
-    
+    matplotlib.plyplot.close('all')
+
     # return filename
     return filename
