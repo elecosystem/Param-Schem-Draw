@@ -283,36 +283,29 @@ def enginnerNotation(value, units="", p=3):
     mantEng = valuePrecise / (10 ** (3 * engExp))
     mantEngStr = "{:f}".format(mantEng)
 
-
     '''
         Text Formatting
         Count the number of zeros at the right side of the number to remove.
         If the first non-zero char is a dot, means that there is no decimal part, so remove it
         NOTE: A number in enginner notation must have at max 3 numbers after the decimal dot.
               So for example, if the precision is set to 2 (p=2) and the number is 0.230, the result must be
-              230m, because the exponent must be multiple of 3
+              230m, because the exponent must be multiple of 3. If you considered the trailing zeros has
+              not part of the number, then you only have 2 significant digits, like desired
     '''
     char2rm = 0
     for k in range(len(mantEngStr)-1, 0, -1):
-        print mantEngStr[k]
         if mantEngStr[k] == '0':
-
             char2rm = char2rm + 1
-            print "==0 " + str(char2rm)
         else:
             if mantEngStr[k] == '.':
-                print mantEngStr[k]
                 char2rm = char2rm + 1
-                print "==. "  + str(char2rm)
             break;
 
 
-
     # for debug
-    print "{}{}{}{}{}{}{}{}".format('Input Value: ',str(value), " | Mantissa :", str(mant), " | Mantissa Rounded: ", mantEngStr, ' ! Char:', str(char2rm))
-    print str(len(mantEngStr))
-    print str(char2rm)
-    print str(len(mantEngStr) - char2rm)
+    # print "{}{}{}{}{}{}{}{}".format('Input Value: ',str(value), " | Mantissa :", str(mant), " | Mantissa Rounded: ", mantEngStr, ' ! Char:', str(char2rm))
+
+    # Formated mantissa
     mantEngStr = mantEngStr[0:len(mantEngStr) - char2rm]
 
     engPrefix = engExp + _UNIT_OFFSET
