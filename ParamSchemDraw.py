@@ -293,7 +293,7 @@ def enginnerNotation(value, units="", p=3):
               230m, because the exponent must be multiple of 3
     '''
     char2rm = 0
-    for k in range(len(mantEngStr)-1, 1, -1):
+    for k in range(len(mantEngStr)-1, 0, -1):
         print mantEngStr[k]
         if mantEngStr[k] == '0':
 
