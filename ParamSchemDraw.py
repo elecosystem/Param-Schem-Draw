@@ -17,10 +17,11 @@ class electricComponent(object):
     pass
 
 class resistor(electricComponent):
-    def __init__(self, value, label= ""):
+    def __init__(self, value, label= "", digits=3):
         if resistor.isValidResistor(value):
             self._value = value
             self._label = label
+            self._digits = digits
         else:
             raise NonPositiveResistance
 
@@ -34,7 +35,7 @@ class resistor(electricComponent):
 
     @property
     def value(self):
-        return electricComponent.enginnerNotation(self._value, resistor.__UNIT)
+        return enginnerNotation(self._value, resistor.__UNIT, self._digits)
 
     @property
     def label(self):
@@ -96,7 +97,7 @@ class resistor(electricComponent):
                 req = req + arg._value
             else:
                 req = req + arg
-        return resistor.enginnerNotation(req)
+        return enginnerNotation(req)
 
     @staticmethod
     def parallel(*args):
@@ -110,7 +111,7 @@ class resistor(electricComponent):
                 req = req * arg._value /(req + arg._value)
             else:
                 req = req * arg /(req + arg)
-        return resistor.enginnerNotation(req)
+        return enginnerNotation(req)
 
     @staticmethod
     def currentDivider(I, R1, R2):
@@ -164,26 +165,6 @@ class resistor(electricComponent):
 
         return R2 / (R1 + R2) * V
 
-
-'''
-    def series(self, *args):
-        assert len(args) > 0, "The number of is incorrect."
-        req = float(self._value)
-        for arg in args[1::]:
-            if ~isinstance(arg, resistor):
-                raise TypeError
-            req = req + arg._value
-        return resistor.enginnerNotation(req)
-
-    def parallel(self, *args):
-        assert len(args) > 0, "The number of is incorrect."
-        req = float(self._value)
-        for arg in args[1::]:
-            if ~isinstance(arg, resistor):
-                raise TypeError
-            req = req + arg._value
-        return resistor.enginnerNotation(req)
-'''
 
 class vSource(electricComponent):
     def __init__(self, value, label= ""):
@@ -276,7 +257,7 @@ def enginnerNotation(value, units="", p=3):
     '''
         Formats a number to engineering notation with p significant digits
     '''
-    print 'Value: ' + str(value)
+
     # Engineering units prefixes and offset to unitary prefix
     _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
     _UNIT_OFFSET = 4
@@ -302,52 +283,37 @@ def enginnerNotation(value, units="", p=3):
     mantEng = valuePrecise / (10 ** (3 * engExp))
     mantEngStr = "{:f}".format(mantEng)
 
-    print "Mantissa in eng:" + mantEngStr
+
     '''
         Text Formatting
-            #.00***, ##.0*** -> remove the decimal dot & all zeros after decimal dot
-            #.#0... -> remove the zeros after the last nonzero number after the decimal dot
-            ###.    -> remove the decimal dot
-            ##.     -> add one  more digit
-            #.#
+        Count the number of zeros at the right side of the number to remove.
+        If the first non-zero char is a dot, means that there is no decimal part, so remove it
+        NOTE: A number in enginner notation must have at max 3 numbers after the decimal dot.
+              So for example, if the precision is set to 2 (p=2) and the number is 0.230, the result must be
+              230m, because the exponent must be multiple of 3
     '''
-    print "mantEngStr[p] == '0' : " + str(mantEngStr[p] == '0')
-    print "Mantissa[p]:" + mantEngStr[p]
+    char2rm = 0
+    for k in range(len(mantEngStr)-1, 1, -1):
+        print mantEngStr[k]
+        if mantEngStr[k] == '0':
 
-    '''
-        if last digit is not a point, means it has a decimal point in the string,
-        having one less digit. If the last two desired digits are a zero, the the
-        number is #.00, which should be formated to #. If the last digit is a zero,
-    '''
-    counter = 0
-    for k in range(p+1, 1, -1)
-        if mantEngStr[k] == 0:
-            counter = counter + 1
+            char2rm = char2rm + 1
+            print "==0 " + str(char2rm)
         else:
-            break
+            if mantEngStr[k] == '.':
+                print mantEngStr[k]
+                char2rm = char2rm + 1
+                print "==. "  + str(char2rm)
+            break;
 
-    if mantEngStr[k+1] == '.':
-        counter = counter + 1
 
-    mantEngStr = mantEngStr[0:counter+1]
-'''
-    if mantEngStr[p] != ".":
-        if mantEngStr[p] == '0':
-            print "Mantissa[p-1]:" + mantEngStr[p-1]
-            if mantEngStr[p-1] == '0':
-                print "Mantissa[p-2]:" + mantEngStr[p-2]
-                mantEngStr = mantEngStr[0:p-2]
-            else:
-                mantEngStr = mantEngStr[0:p-1]
 
-        #print "Mantissa[p+1]:" + mantEngStr[p+1]
-        mantEngStr = mantEngStr[0:p+1]
-
-    elif mantEngStr[p+1] == '0':
-        print "Mantissa[p+1]:" + mantEngStr[p+1]
-        print "Mantissa[p]:" + mantEngStr[p]
-        mantEngStr = mantEngStr[0:p]
-'''
+    # for debug
+    print "{}{}{}{}{}{}{}{}".format('Input Value: ',str(value), " | Mantissa :", str(mant), " | Mantissa Rounded: ", mantEngStr, ' ! Char:', str(char2rm))
+    print str(len(mantEngStr))
+    print str(char2rm)
+    print str(len(mantEngStr) - char2rm)
+    mantEngStr = mantEngStr[0:len(mantEngStr) - char2rm]
 
     engPrefix = engExp + _UNIT_OFFSET
     if (engPrefix < 0) or (engExp > len(_PREFIX)-1):

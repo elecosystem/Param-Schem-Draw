@@ -7,7 +7,7 @@ import os, sys
 sys.path.insert(0,os.path.pardir)
 
 import ParamSchemDraw
-print ParamSchemDraw.enginnerNotation(0.233)
+print ParamSchemDraw.enginnerNotation(0.2336, "", 2)
 print "\n"
 print ParamSchemDraw.enginnerNotation(2.33)
 print "\n"
