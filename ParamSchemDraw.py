@@ -14,63 +14,7 @@ from math import floor, log10
 
 # Classes to work with eletrical components
 class electricComponent(object):
-    @staticmethod
-    def enginnerNotation(value, units="", p=3):
-        '''
-            Formats a number to engineering notation with p significant digits
-        '''
-
-        # Engineering units prefixes and offset to unitary prefix
-        _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
-        _UNIT_OFFSET = 4
-
-        # Handling negative numbers and zero
-        sign = ""
-        if value < 0:
-            sign = "-"
-            value = -value
-        elif value == 0:
-            return '0'
-
-        # Exponent and mantissa
-        exp = floor(log10(value))
-        mant = value / 10 ** exp
-
-        # Round number to significant number of digits
-        mantPrecise = round(mant, p-1)
-        valuePrecise = mantPrecise * 10 ** exp
-
-        # Convert number to engineer Notation
-        engExp = int(exp) // 3
-        mantEng = valuePrecise / (10 ** (3 * engExp))
-        mantEngStr = "{:f}".format(mantEng)
-
-        '''
-            Text Formatting
-                #.00***, ##.0*** -> remove the decimal dot & all zeros after decimal dot
-                #.#0... -> remove the zeros after the last nonzero number after the decimal dot
-                ###.    -> remove the decimal dot
-                ##.     -> add one  more digit
-                #.#
-        '''
-        if mantEngStr[p] != ".":
-            if mantEngStr[p] == '0':
-                if mantEngStr[p-1] == '0':
-                    mantEngStr = mantEngStr[0:p-2]
-                else:
-                    mantEngStr = mantEngStr[0:p-1]
-            # if last digit is not a point, means it has a decimal point in the string
-            # therefore it has one less digit
-            mantEngStr = mantEngStr[0:p+1]
-        elif mantEngStr[p+1] == '0':
-            mantEngStr = mantEngStr[0:p]
-
-        engPrefix = engExp + _UNIT_OFFSET
-        if (engPrefix < 0) or (engExp > len(_PREFIX)-1):
-            # Smaller than lowest unit or higher than higher unit
-            raise ValueOutsideReasonableBounds
-
-        return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
+    pass
 
 class resistor(electricComponent):
     def __init__(self, value, label= ""):
@@ -328,6 +272,76 @@ class iSource(electricComponent):
     def schem(self, schematic):
         self._schem = schematic
 
+def enginnerNotation(value, units="", p=3):
+    '''
+        Formats a number to engineering notation with p significant digits
+    '''
+    print 'Value: ' + str(value)
+    # Engineering units prefixes and offset to unitary prefix
+    _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
+    _UNIT_OFFSET = 4
+
+    # Handling negative numbers and zero
+    sign = ""
+    if value < 0:
+        sign = "-"
+        value = -value
+    elif value == 0:
+        return '0'
+
+    # Exponent and mantissa
+    exp = floor(log10(value))
+    mant = value / 10 ** exp
+
+    # Round number to significant number of digits
+    mantPrecise = round(mant, p-1)
+    valuePrecise = mantPrecise * 10 ** exp
+
+    # Convert number to engineer Notation
+    engExp = int(exp) // 3
+    mantEng = valuePrecise / (10 ** (3 * engExp))
+    mantEngStr = "{:f}".format(mantEng)
+
+    print "Mantissa in eng:" + mantEngStr
+    '''
+        Text Formatting
+            #.00***, ##.0*** -> remove the decimal dot & all zeros after decimal dot
+            #.#0... -> remove the zeros after the last nonzero number after the decimal dot
+            ###.    -> remove the decimal dot
+            ##.     -> add one  more digit
+            #.#
+    '''
+    print "mantEngStr[p] == '0' : " + str(mantEngStr[p] == '0')
+    print "Mantissa[p]:" + mantEngStr[p]
+
+    '''
+        if last digit is not a point, means it has a decimal point in the string,
+        having one less digit. If the last two desired digits are a zero, the the
+        number is #.00, which should be formated to #. If the last digit is a zero,
+    '''
+    if mantEngStr[p] != ".":
+        if mantEngStr[p] == '0':
+            print "Mantissa[p-1]:" + mantEngStr[p-1]
+            if mantEngStr[p-1] == '0':
+                print "Mantissa[p-2]:" + mantEngStr[p-2]
+                mantEngStr = mantEngStr[0:p-2]
+            else:
+                mantEngStr = mantEngStr[0:p-1]
+
+        #print "Mantissa[p+1]:" + mantEngStr[p+1]
+        mantEngStr = mantEngStr[0:p+1]
+
+    elif mantEngStr[p+1] == '0':
+        print "Mantissa[p+1]:" + mantEngStr[p+1]
+        print "Mantissa[p]:" + mantEngStr[p]
+        mantEngStr = mantEngStr[0:p]
+
+    engPrefix = engExp + _UNIT_OFFSET
+    if (engPrefix < 0) or (engExp > len(_PREFIX)-1):
+        # Smaller than lowest unit or higher than higher unit
+        raise ValueOutsideReasonableBounds
+
+    return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
 # Exceptions throw by class
 class NonPositiveResistance(ValueError):
