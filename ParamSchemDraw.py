@@ -319,6 +319,18 @@ def enginnerNotation(value, units="", p=3):
         having one less digit. If the last two desired digits are a zero, the the
         number is #.00, which should be formated to #. If the last digit is a zero,
     '''
+    counter = 0
+    for k in range(p+1, 1, -1)
+        if mantEngStr[k] == 0:
+            counter = counter + 1
+        else:
+            break
+
+    if mantEngStr[k+1] == '.':
+        counter = counter + 1
+
+    mantEngStr = mantEngStr[0:counter+1]
+'''
     if mantEngStr[p] != ".":
         if mantEngStr[p] == '0':
             print "Mantissa[p-1]:" + mantEngStr[p-1]
@@ -335,6 +347,7 @@ def enginnerNotation(value, units="", p=3):
         print "Mantissa[p+1]:" + mantEngStr[p+1]
         print "Mantissa[p]:" + mantEngStr[p]
         mantEngStr = mantEngStr[0:p]
+'''
 
     engPrefix = engExp + _UNIT_OFFSET
     if (engPrefix < 0) or (engExp > len(_PREFIX)-1):
