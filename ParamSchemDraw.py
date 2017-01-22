@@ -257,6 +257,10 @@ def enginnerNotation(value, units="", p=3):
     '''
         Formats a number to engineering notation with p significant digits
     '''
+    assert isinstance(value, (Number, Decimal))
+    assert isinstance(units, str)
+    assert isinstance(p, int)
+    assert p > 0 and p <= 16
 
     # Engineering units prefixes and offset to unitary prefix
     _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
@@ -281,7 +285,7 @@ def enginnerNotation(value, units="", p=3):
     # Convert number to engineer Notation
     engExp = int(exp) // 3
     mantEng = valuePrecise / (10 ** (3 * engExp))
-    mantEngStr = "{:f}".format(mantEng)
+    mantEngStr = "{:f}".format(float(mantEng))
 
     '''
         Text Formatting
