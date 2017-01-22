@@ -1,53 +1,65 @@
 '''
     ParamSchemDraw : Parametrized Schematic Draw
 
-    This file describes a set of class and methods to ease the of use of SchewDraw for
-    paramerized circuit draw
+    A set of classes and methods to ease the of use of SchewDraw for paramerized
+    circuit draw. Also provides some useful operations, such the as parallel and
+    series association
+
+    Also offers a method to format a given number to enginnering notation which
+    supports unit appending and number of significant digits
 
     Author: Pedro Martins
-
+    version: 0.1
 '''
 
-from numbers import Number, Complex
-from decimal import Decimal
 from math import floor, log10
 
-# Classes to work with eletrical components
+
 class electricComponent(object):
     pass
 
 class resistor(electricComponent):
+    '''
+        Class used to define an ideal resistor
+        It provides static methods to compute a parallel/series association of
+        n resistors, a current divider and a voltage divider. It also offers a
+        method to check if a number is a valid resistance value
+        It can also format the resistance value to enginnering notation
+    '''
+
     def __init__(self, value, label= "", digits=3):
+        '''
+            USAGE: resistor(value, label, digits)
+                   resistor(value, label)
+                   resistor(value)
+
+            ARGUMENTS:
+                value  -> resistance value for the given resistor element
+                label  -> name/identifier of the resistance (optional)
+                digits -> number of significant digits to use in enginnering notation
+
+            OUTPUT: a resistor object
+
+            CONSTRAINTS:
+                value must be a postive number. Float and Integer are supported
+                label must be a string
+                digits must be a integer in the interval [1, 16]
+
+                other types/values outside the specified will result in
+                AssertionError/Exceptions
+        '''
+
+        assert isinstance(label, str), "The label element must be a string"
+        assert isinstance(digits, int), "The digits element must be an integer"
+        assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
+
         if resistor.isValidResistor(value):
-            self._value = value
-            self._label = label
+            self._value  = value
+            self._label  = label
             self._digits = digits
         else:
-            raise NonPositiveResistance
+            raise InvalidResistor
 
-    @staticmethod
-    def isValidResistor(R):
-        assert R != None
-        if isinstance(R, (Number, Decimal)) and ~isinstance(R, Complex):
-            if R > 0:
-                return True
-        return False
-
-    @property
-    def value(self):
-        return enginnerNotation(self._value, resistor.__UNIT, self._digits)
-
-    @property
-    def label(self):
-        return self._label
-
-    @property
-    def schem(self):
-        return self._schem
-
-    @schem.setter
-    def schem(self, schematic):
-        self._schem = schematic
 
     __UNIT = '$\Omega$'
 
@@ -77,8 +89,53 @@ class resistor(electricComponent):
              8.2 , 82 ,	820 , 8.2 * 10 ** 3 , 82 * 10 ** 3 , 820 * 10 ** 3 , 8.2 * 10 ** 6,
              9.1 , 91 ,	910 , 9.1 * 10 ** 3 , 91 * 10 ** 3 , 910 * 10 ** 3 , 9.1 * 10 ** 6)
 
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def valueEng(self):
+        '''
+            Outputs the resistance of the resistor in enginnering notation,
+            appending the ohms unit and using the significant number of digits
+            defined when the object was created
+        '''
+        return enginnerNotation(self._value, resistor.__UNIT, self._digits)
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, label):
+        assert isinstance(label, str), "The label of the resistor must be a string"
+        self._label =  label
+
+    @property
+    def digits(self):
+        return self._digits
+
+    @property
+    def schem(self):
+        return self._schem
+
+    @schem.setter
+    def schem(self, schematic):
+        self._schem = schematic
+
     @staticmethod
-    def e24():
+    def isValidResistor(R):
+        '''
+            Check if R is a valid value for resistance.
+            It must be a positive integer or float
+        '''
+        if isinstance(R, (int, float)):
+            if R > 0:
+                return True
+        return False
+
+    @staticmethod
+    def E24():
         return resistor.__E24
 
     @staticmethod
@@ -87,78 +144,139 @@ class resistor(electricComponent):
 
     @staticmethod
     def series(*args):
-        assert len(args) > 1, "The number of is incorrect. A series association must at least have 2"
-        if isinstance(args[0], resistor):
+        '''
+            Computes the series association for a undefined number of arguments
+            and returns the equivalent resistance in a resistor object
+            The arguments can be either resistor objects, either valid resistance
+            values, but the output is a resistor object
+
+            CONSIDERATIONS:
+            The number of significant digits of the equivalent resistor is the
+            minimum of the significant digits specified in the resistor objects.
+            If resistance values without that aren't an resistor object are passed
+            by argument, it is considered that they are ideal (having maximum
+            precision), therefore don't influenciate the significant digits of
+            the equivalent resistor.
+            If no resistor object is passed by argument, the number of significant
+            digits in the equivalent resistor is the default, 3
+        '''
+        assert len(args) > 1, "A minimum of two resistors is required for a series association"
+        flag = isinstance(args[0], resistor)
+        if flag:
             req = float(args[0]._value)
+            digits = args[0]._digits
         else:
             req = float(args[0])
         for arg in args[1::]:
             if isinstance(arg, resistor):
                 req = req + arg._value
-            else:
+                if not flag:
+                    digits = arg._digits
+                    flag = True
+                elif arg._digits < digits:
+                    digits = arg._digits
+            elif isValidResistor(arg):
                 req = req + arg
-        return enginnerNotation(req)
+            else:
+                raise InvalidResistor
+        if not flag:
+            digits = 3
+        return resistor(req, "$R_{eq}$", digits)
 
     @staticmethod
     def parallel(*args):
-        assert len(args) > 1, "The number of is incorrect. A parallel association must at least have 2"
-        if isinstance(args[0], resistor):
-            req = float(args[0]._value)
+        '''
+            Computes the parallel association for a undefined number of arguments
+            and returns the equivalent resistance in a resistor object
+            The arguments can be either resistor objects, either valid resistance
+            values, but the output is a resistor object
+
+            CONSIDERATIONS:
+            The number of significant digits of the equivalent resistor is the
+            minimum of the significant digits specified in the resistor objects.
+            If resistance values without that aren't an resistor object are passed
+            by argument, it is considered that they are ideal (having maximum
+            precision), therefore don't influenciate the significant digits of
+            the equivalent resistor.
+            If no resistor object is passed by argument, the number of significant
+            digits in the equivalent resistor is the default, 3
+        '''
+        assert len(args) > 1, "A minimum of two resistors is required for a parallel association"
+        flag = isinstance(args[0], resistor)
+        if flag:
+            req = float(args[0].value)
+            digits = args[0].digits
         else:
             req = float(args[0])
         for arg in args[1::]:
             if isinstance(arg, resistor):
                 req = req * arg._value /(req + arg._value)
+                if not flag:
+                    digits = arg.digits
+                    flag = True
+                elif arg._digits < digits:
+                    digits = arg.digits
             else:
                 req = req * arg /(req + arg)
-        return enginnerNotation(req)
+        if not flag:
+            digits = 3
+        return resistor(req, "$R_{eq}$", digits)
 
     @staticmethod
     def currentDivider(I, R1, R2):
         '''
-            ---I----+--------+--o
-                    |        |
-                    R1      R2
-                    |        |
-                    +--GND---+--o
+            Computes the current that flows trough R2 in a current divider
+            formed by the parallel association of resistances R1 and R2, such as
+            shown below
+                                ---I----+--------+--o
+                                        |        |
+                                        R1      R2
+                                        |        |
+                                        +--GND---+--o
 
-        where the output is the current in the resistor R2
+            "I" can either be a iSource object or a valid current value
+            R1 and R2 can either be a resistor object or a valid resistance value
         '''
-        if ~isinstance(I, iSource):
+
+        if not isinstance(I, iSource):
             assert iSource.isValidISource(I)
         else:
             I = I.value
-        if ~isinstance(R1, resistor):
+        if not isinstance(R1, resistor):
             assert resistor.isValidResistor(R1)
         else:
             R1 = R1.value
-        if ~isinstance(R1, resistor):
+        if not isinstance(R2, resistor):
             assert resistor.isValidResistor(R2)
         else:
-            R2 = R2.values
+            R2 = R2.value
 
         return (R1 + R2) / R2 * I
 
     @staticmethod
     def voltageDivider(V, R1, R2):
         '''
-            ---V----R1---+--o
-                         |
-                         R2
-                         |
-            -------GND---+--o
-
-        where the output is the voltage drop across the resistor R2
+            Computes the voltage drop across the resistor R2 in a voltage divider
+            formed by the series association of resistances R1 and R2, such as
+            shown below
+                                    ---V----R1---+--o
+                                                 |
+                                                 R2
+                                                 |
+                                    -------GND---+--o
+            "V" can either be a vSource object or a valid voltage value
+            R1 and R2 can either be a resistor object or a valid resistance value
         '''
-        if ~isinstance(V, vSource):
+
+        if  not isinstance(V, vSource):
             assert vSource.isValidVSource(V)
         else:
             V = V.value
-        if ~isinstance(R1, resistor):
+        if  not isinstance(R1, resistor):
             assert resistor.isValidResistor(R1)
         else:
             R1 = R1.value
-        if ~isinstance(R1, resistor):
+        if  not isinstance(R1, resistor):
             assert resistor.isValidResistor(R2)
         else:
             R2 = R2.values
@@ -167,83 +285,160 @@ class resistor(electricComponent):
 
 
 class vSource(electricComponent):
-    def __init__(self, value, label= ""):
-        if vSource.isValidVSource(value):
-            self._value = value
-            self._label = label
+    '''
+        Class used to define an ideal independent voltage source
+        It offers a method to check if a number is a valid voltage value
+        It can also format the voltage value to enginnering notation
+    '''
+
+    def __init__(self, voltage, label= "", digits=3):
+        '''
+            USAGE: vSource(voltage, label, digits)
+                   vSource(voltage, label)
+                   vSource(voltage)
+
+            ARGUMENTS:
+                voltage  -> voltage value for the given voltage source element
+                label  -> name/identifier of the voltage source (optional)
+                digits -> number of significant digits to use in enginnering notation
+
+            OUTPUT: a independent voltage source object
+
+            CONSTRAINTS:
+                voltage must be a non zero number. Float and Integer are supported
+                label must be a string
+                digits must be a integer in the interval [1, 16]
+
+                other types/values outside the specified will result in
+                AssertionError/Exceptions
+        '''
+        assert isinstance(label, str), "The label element must be a string"
+        assert isinstance(digits, int), "The digits element must be an integer"
+        assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
+        if vSource.isValidVSource(voltage):
+            self._voltage = value
+            self._label   = label
+            self._digits  = digits
         else:
             raise InvalidIndepentSource
 
+    __.UNIT = "V"
+
+
+    @property
+    def voltage(self):
+        return self._voltage
+
+    @property
+    def voltageEng(self):
+        '''
+            Outputs the voltage of the voltage source in enginnering notation,
+            appending the volts unit and using the significant number of digits
+            defined when the object was created
+        '''
+        return enginnerNotation(self._voltage, vSource.__UNIT, self._digits)
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, label):
+        assert isinstance(label, str), "The label of the voltage source must be a string"
+        self._label = label
+
+    @property
+    def digits(self):
+        return self._digits
+
+    @property
+    def schem(self):
+        return self._schem
+
+    @schem.setter
+    def schem(self, schematic):
+        self._schem = schematic
+
+    @staticmethod
+    def unit():
+        return vSource.__UNIT
+
     @staticmethod
     def isValidVSource(V):
-        assert V != None
-        if isinstance(V, (Number, Decimal)):
+        '''
+            Check if V is a valid value for voltage.
+            It must be a non zero integer or float
+        '''
+        if isinstance(V, (int, float, complex)):
             if V != 0:
                 return True
         return False
 
-    @property
-    def value(self):
-        if( self._value >= 1 * 10 ** 6 ):
-            return str( (self._value % (1 * 10 ** 6)) * 10 ** -6 + (self._value / (1 * 10 ** 6)) ) + '$M V$'
-        elif( self._value >= 1 * 10 ** 3 ):
-            return str( (self._value % (1 * 10 ** 3)) * 10 ** -3 + (self._value / (1 * 10 ** 3)) ) + '$K V$'
-        elif( self._value >= 1 ):
-            return str(self._value) + '$V$'
-        elif( self._value >= 1 * 10 ** -3):
-             return str( self._value / (1 * 10 ** -3) ) + '$m V$'
-        elif( self._value >= 1 * 10 ** -6):
-             return str( self._value / (1 * 10 ** -6) ) + '$\mu V$'
-        else:
-            raise ValueError
-
-    @property
-    def label(self):
-        return self._label
-
-    @property
-    def schem(self):
-        return self._schem
-
-    @schem.setter
-    def schem(self, schematic):
-        self._schem = schematic
-
-
 class iSource(electricComponent):
-    def __init__(self, value, label= ""):
-        if iSource.isValidISource(value):
-            self._value = value
-            self._label = label
+    '''
+        Class used to define an ideal independent current source
+        It offers a method to check if a number is a valid voltage value
+        It can also format the voltage value to enginnering notation
+    '''
+
+    def __init__(self, current, label= "", digits=3):
+        '''
+            USAGE: iSource(voltage, label, digits)
+                   iSource(voltage, label)
+                   iSource(voltage)
+
+            ARGUMENTS:
+                current -> current value for the given voltage source element
+                label   -> name/identifier of the current source (optional)
+                digits  -> number of significant digits to use in enginnering notation
+
+            OUTPUT: a independent current source object
+
+            CONSTRAINTS:
+                currents must be a non zero number. Float and Integer are supported
+                label must be a string
+                digits must be a integer in the interval [1, 16]
+
+                other types/values outside the specified will result in
+                AssertionError/Exceptions
+        '''
+        assert isinstance(label, str), "The label element must be a string"
+        assert isinstance(digits, int), "The digits element must be an integer"
+        assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
+        if iSource.isValidISource(current):
+            self._current = current
+            self._label   = label
+            self._digits  = digits
         else:
             raise InvalidIndepentSource
 
-    @staticmethod
-    def isValidISource(I):
-        assert I != None
-        if isinstance(I, (Number, Decimal)):
-            if I != 0:
-                return True
-        return False
+    __.UNIT = "A"
 
     @property
-    def value(self):
-        if( self._value >= 1 * 10 ** 6 ):
-            return str( (self._value % (1 * 10 ** 6)) * 10 ** -6 + (self._value / (1 * 10 ** 6)) ) + '$M A$'
-        elif( self._value >= 1 * 10 ** 3 ):
-            return str( (self._value % (1 * 10 ** 3)) * 10 ** -3 + (self._value / (1 * 10 ** 3)) ) + '$K A$'
-        elif( self._value >= 1 ):
-            return str(self._value) + '$A$'
-        elif( self._value >= 1 * 10 ** -3):
-             return str( self._value / (1 * 10 ** -3) ) + '$m A$'
-        elif( self._value >= 1 * 10 ** -6):
-             return str( self._value / (1 * 10 ** -6) ) + '$\mu A$'
-        else:
-            raise ValueError
+    def current(self):
+        return self._value
+
+    @property
+    def currentEng(self):
+        '''
+            Outputs the voltage of the voltage source in enginnering notation,
+            appending the volts unit and using the significant number of digits
+            defined when the object was created
+        '''
+        return enginnerNotation(self._current, iSource.__UNIT, self._digits)
 
     @property
     def label(self):
         return self._label
+
+    @label.setter
+    def label(self, label):
+        assert isinstance(label, str), "The label of the current source must be a string"
+        self._label = label
+
+    @property
+    def digits(self):
+        return self._digits
 
     @property
     def schem(self):
@@ -252,6 +447,21 @@ class iSource(electricComponent):
     @schem.setter
     def schem(self, schematic):
         self._schem = schematic
+
+    @staticmethod
+    def unit():
+        return iSource.__UNIT
+
+    @staticmethod
+    def isValidISource(I):
+        '''
+            Check if I is a valid value for current.
+            It must be a non zero integer or float
+        '''
+        if isinstance(I, (int, float, complex)):
+            if I != 0:
+                return True
+        return False
 
 def enginnerNotation(value, units="", p=3):
     '''
@@ -319,15 +529,26 @@ def enginnerNotation(value, units="", p=3):
 
     return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
-# Exceptions throw by class
-class NonPositiveResistance(ValueError):
-    """ Resistance is not a positive value """
+
+'''
+    Exceptions that could be thrown by the classes
+'''
+class InvalidResistor(ValueError, TypeError):
+    """
+        Resistance must a positive values
+        Float or integer are acceptable
+    """
+    pass
+
+class InvalidIndepentSource(ValueError, TypeError):
+    '''
+        The voltage/current value can't be zero
+        Float, integer and complex are acceptable
+    '''
     pass
 
 class ValueOutsideReasonableBounds(ValueError):
-    """ The value is not reasonable """
-    pass
-
-class InvalidIndepentSource(ValueError):
-    """ The independent voltage/current source value can't be zero """
+    '''
+        The value is not reasonable 
+    '''
     pass
