@@ -93,3 +93,4 @@ ENV/
 IMAGENS
 *.sagews
 *.py~
+*.py.swp

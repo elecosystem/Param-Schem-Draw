@@ -66,5 +66,3 @@ for p in range(1, 7, 1):
     print ParamSchemDraw.enginnerNotation(0, "", p)
     print ParamSchemDraw.enginnerNotation(-0, "", p)
     print "\n"
-
-
