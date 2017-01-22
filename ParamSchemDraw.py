@@ -27,21 +27,21 @@ class resistor(electricComponent):
         It can also format the resistance value to enginnering notation
     '''
 
-    def __init__(self, value, label= "", digits=3):
+    def __init__(self, resistance, label= "", digits=3):
         '''
-            USAGE: resistor(value, label, digits)
-                   resistor(value, label)
-                   resistor(value)
+            USAGE: resistor(resistance, label, digits)
+                   resistor(resistance, label)
+                   resistor(resistance)
 
             ARGUMENTS:
-                value  -> resistance value for the given resistor element
-                label  -> name/identifier of the resistance (optional)
-                digits -> number of significant digits to use in enginnering notation
+                resistance  -> resistance value for the given resistor element
+                label       -> name/identifier of the resistance (optional)
+                digits      -> number of significant digits to use in enginnering notation
 
-            OUTPUT: a resistor object
+            OUTPUT: a ideal resistor object
 
             CONSTRAINTS:
-                value must be a postive number. Float and Integer are supported
+                resistance must be a postive number. Float and Integer are supported
                 label must be a string
                 digits must be a integer in the interval [1, 16]
 
@@ -53,10 +53,10 @@ class resistor(electricComponent):
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
 
-        if resistor.isValidResistor(value):
-            self._value  = value
-            self._label  = label
-            self._digits = digits
+        if resistor.isValidResistor(resistance):
+            self._resistance  = resistance
+            self._label       = label
+            self._digits      = digits
         else:
             raise InvalidResistor
 
@@ -90,17 +90,17 @@ class resistor(electricComponent):
              9.1 , 91 ,	910 , 9.1 * 10 ** 3 , 91 * 10 ** 3 , 910 * 10 ** 3 , 9.1 * 10 ** 6)
 
     @property
-    def value(self):
-        return self._value
+    def resistance(self):
+        return self._resistance
 
     @property
-    def valueEng(self):
+    def resistanceEng(self):
         '''
             Outputs the resistance of the resistor in enginnering notation,
             appending the ohms unit and using the significant number of digits
             defined when the object was created
         '''
-        return enginnerNotation(self._value, resistor.__UNIT, self._digits)
+        return enginnerNotation(self._resistance, resistor.__UNIT, self._digits)
 
     @property
     def label(self):
@@ -143,14 +143,19 @@ class resistor(electricComponent):
         return resistor.__UNIT
 
     @staticmethod
-    def series(*args):
+    def series(*args, **kwargs):
         '''
             Computes the series association for a undefined number of arguments
             and returns the equivalent resistance in a resistor object
             The arguments can be either resistor objects, either valid resistance
-            values, but the output is a resistor object
+            values
+            The output by default is a float which contains the equivalente
+            resistance value in ohms. Nevertheless, if one of the arguments is a
+            dictionary with the (key, value) pair is specified as ('resistor', True),
+            a resistor object is returned with the label $R_{eq}$ and the minimum
+            number of significant digits (read SIGNIFICANT DIGITS for more details)
 
-            CONSIDERATIONS:
+            SIGNIFICANT DIGITS:
             The number of significant digits of the equivalent resistor is the
             minimum of the significant digits specified in the resistor objects.
             If resistance values without that aren't an resistor object are passed
@@ -163,35 +168,44 @@ class resistor(electricComponent):
         assert len(args) > 1, "A minimum of two resistors is required for a series association"
         flag = isinstance(args[0], resistor)
         if flag:
-            req = float(args[0]._value)
+            req = float(args[0]._resistance)
             digits = args[0]._digits
         else:
             req = float(args[0])
         for arg in args[1::]:
             if isinstance(arg, resistor):
-                req = req + arg._value
+                req = req + arg._resistance
                 if not flag:
                     digits = arg._digits
                     flag = True
                 elif arg._digits < digits:
                     digits = arg._digits
-            elif isValidResistor(arg):
+            elif resistor.isValidResistor(arg):
                 req = req + arg
             else:
                 raise InvalidResistor
         if not flag:
             digits = 3
-        return resistor(req, "$R_{eq}$", digits)
+        if kwargs:
+            if kwargs['resistor'] == True:
+                return resistor(req, "$R_{eq}$", digits)
+        else:
+            return req
 
     @staticmethod
-    def parallel(*args):
+    def parallel(*args, **kwargs):
         '''
             Computes the parallel association for a undefined number of arguments
             and returns the equivalent resistance in a resistor object
             The arguments can be either resistor objects, either valid resistance
-            values, but the output is a resistor object
+            values.
+            The output by default is a float which contains the equivalente
+            resistance value in ohms. Nevertheless, if one of the arguments is a
+            dictionary with the (key, value) pair is specified as ('resistor', True),
+            a resistor object is returned with the label $R_{eq}$ and the minimum
+            number of significant digits (read SIGNIFICANT DIGITS for more details)
 
-            CONSIDERATIONS:
+            SIGNIFICANT DIGITS:
             The number of significant digits of the equivalent resistor is the
             minimum of the significant digits specified in the resistor objects.
             If resistance values without that aren't an resistor object are passed
@@ -204,23 +218,29 @@ class resistor(electricComponent):
         assert len(args) > 1, "A minimum of two resistors is required for a parallel association"
         flag = isinstance(args[0], resistor)
         if flag:
-            req = float(args[0].value)
+            req = float(args[0].resistance)
             digits = args[0].digits
         else:
             req = float(args[0])
         for arg in args[1::]:
             if isinstance(arg, resistor):
-                req = req * arg._value /(req + arg._value)
+                req = req * arg._resistance /(req + arg._resistance)
                 if not flag:
                     digits = arg.digits
                     flag = True
                 elif arg._digits < digits:
                     digits = arg.digits
-            else:
+            elif resistor.isValidResistor(arg):
                 req = req * arg /(req + arg)
+            else:
+                raise InvalidResistor
         if not flag:
             digits = 3
-        return resistor(req, "$R_{eq}$", digits)
+        if kwargs:
+            if kwargs['resistor'] == True:
+                return resistor(req, "$R_{eq}$", digits)
+        else:
+            return req
 
     @staticmethod
     def currentDivider(I, R1, R2):
@@ -241,15 +261,15 @@ class resistor(electricComponent):
         if not isinstance(I, iSource):
             assert iSource.isValidISource(I)
         else:
-            I = I.value
+            I = float(I.current)
         if not isinstance(R1, resistor):
             assert resistor.isValidResistor(R1)
         else:
-            R1 = R1.value
+            R1 = float(R1._resistance)
         if not isinstance(R2, resistor):
             assert resistor.isValidResistor(R2)
         else:
-            R2 = R2.value
+            R2 = float(R2._resistance)
 
         return (R1 + R2) / R2 * I
 
@@ -270,16 +290,19 @@ class resistor(electricComponent):
 
         if  not isinstance(V, vSource):
             assert vSource.isValidVSource(V)
+            V = float(V)
         else:
-            V = V.value
+            V = V.voltage
         if  not isinstance(R1, resistor):
             assert resistor.isValidResistor(R1)
+            R1 = float(R1)
         else:
-            R1 = R1.value
+            R1 = R1._resistance
         if  not isinstance(R1, resistor):
             assert resistor.isValidResistor(R2)
+            R2 = float(R2)
         else:
-            R2 = R2.values
+            R2 = R2._resistance
 
         return R2 / (R1 + R2) * V
 
@@ -316,13 +339,13 @@ class vSource(electricComponent):
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
         if vSource.isValidVSource(voltage):
-            self._voltage = value
+            self._voltage = voltage
             self._label   = label
             self._digits  = digits
         else:
             raise InvalidIndepentSource
 
-    __.UNIT = "V"
+    __UNIT = "V"
 
 
     @property
@@ -412,11 +435,11 @@ class iSource(electricComponent):
         else:
             raise InvalidIndepentSource
 
-    __.UNIT = "A"
+    __UNIT = "A"
 
     @property
     def current(self):
-        return self._value
+        return self._current
 
     @property
     def currentEng(self):
@@ -465,12 +488,33 @@ class iSource(electricComponent):
 
 def enginnerNotation(value, units="", p=3):
     '''
-        Formats a number to engineering notation with p significant digits
+        Formats a number to engineering notation using p significant digits,
+        appending the given unit after the magnitude prefix
+
+        USAGE: enginnerNotation(value, units, p)
+               enginnerNotation(value, units)
+               enginnerNotation(value)
+
+        ARGUMENTS:
+            value -> value to be formatted to enginnering notation
+            units -> units of the measure
+            p     -> number of significant digits to use in enginnering notation
+
+        OUTPUT: a string with the value in enginnering notation with p significant
+                digits with physical units
+
+        CONSTRAINTS:
+            value must be a Float and Integer number
+            units must be a string
+            digits must be a integer in the interval [1, 16]
+
+            other types/values outside the specified will result in
+            AssertionError/Exceptions
     '''
-    assert isinstance(value, (Number, Decimal))
+    assert isinstance(value, (int, float))
     assert isinstance(units, str)
     assert isinstance(p, int)
-    assert p > 0 and p <= 16
+    assert p >= 1 and p <= 16
 
     # Engineering units prefixes and offset to unitary prefix
     _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
@@ -530,6 +574,8 @@ def enginnerNotation(value, units="", p=3):
     return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
 
+
+
 '''
     Exceptions that could be thrown by the classes
 '''
@@ -549,6 +595,6 @@ class InvalidIndepentSource(ValueError, TypeError):
 
 class ValueOutsideReasonableBounds(ValueError):
     '''
-        The value is not reasonable 
+        The value is not reasonable for the envised applications
     '''
     pass
