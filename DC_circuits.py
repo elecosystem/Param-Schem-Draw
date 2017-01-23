@@ -16,7 +16,7 @@ from ParamSchemDraw import electricComponent, resistor, vSource
 
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
-
+path = ""   
 # Image extension
 extension = '.png'
 
@@ -43,7 +43,6 @@ def example_01(params, ekey, label=True):
     # add the first voltage source, his name, the first resistor and a dot
     V1.schem = d.add( e.SOURCE_V, label= V1.label )
     R1.schem = d.add( e.RES, d='right', label= R1.label )
-    R1.schem.add_label(R1.resistance, loc='bot')
     d.add( e.DOT )
 
     #save node position to stack, add vertical resistor, a dot and pop stack (point draw start point to the node)
@@ -75,9 +74,10 @@ def example_01(params, ekey, label=True):
     # Add labels if the circuit requires parametrization
     if label:
         V1.schem.add_label(V1.voltage, loc='bot')
+        V2.schem.add_label(V2.voltage, loc='bot')
+        R1.schem.add_label(R1.resistance, loc='bot')
         R2.schem.add_label(R2.resistance, loc='bot')
         R3.schem.add_label(R3.resistance, loc='bot')
-        V2.schem.add_label(V2.resistance, loc='bot')
         R4.schem.add_label(R4.resistance, loc='bot')
 
     # draw the circuit, but don't show
