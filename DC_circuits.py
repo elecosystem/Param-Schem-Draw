@@ -24,7 +24,7 @@ extension = '.png'
 # TODO
 # change params to **kwargs 
 # modify classes to support location of label.
-#
+
 def example_01(params, ekey, label=True):
     # Parameters
     V1 = vSource(params['$V_1$'], '$V_1$')

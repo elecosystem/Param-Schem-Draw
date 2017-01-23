@@ -100,7 +100,7 @@ class resistor(electricComponent):
             appending the ohms unit and using the significant number of digits
             defined when the object was created
         '''
-        return enginnerNotation(self._resistance, resistor.__UNIT, self._digits)
+        return engineerNotation(self._resistance, resistor.__UNIT, self._digits)
 
     @property
     def label(self):
@@ -359,7 +359,7 @@ class vSource(electricComponent):
             appending the volts unit and using the significant number of digits
             defined when the object was created
         '''
-        return enginnerNotation(self._voltage, vSource.__UNIT, self._digits)
+        return engineerNotation(self._voltage, vSource.__UNIT, self._digits)
 
     @property
     def label(self):
@@ -448,7 +448,7 @@ class iSource(electricComponent):
             appending the volts unit and using the significant number of digits
             defined when the object was created
         '''
-        return enginnerNotation(self._current, iSource.__UNIT, self._digits)
+        return engineerNotation(self._current, iSource.__UNIT, self._digits)
 
     @property
     def label(self):
@@ -486,14 +486,14 @@ class iSource(electricComponent):
                 return True
         return False
 
-def enginnerNotation(value, units="", p=3):
+def engineerNotation(value, units="", p=3):
     '''
         Formats a number to engineering notation using p significant digits,
         appending the given unit after the magnitude prefix
 
-        USAGE: enginnerNotation(value, units, p)
-               enginnerNotation(value, units)
-               enginnerNotation(value)
+        USAGE: engineerNotation(value, units, p)
+               engineerNotation(value, units)
+               engineerNotation(value)
 
         ARGUMENTS:
             value -> value to be formatted to enginnering notation
@@ -517,7 +517,7 @@ def enginnerNotation(value, units="", p=3):
     assert p >= 1 and p <= 16
 
     # Engineering units prefixes and offset to unitary prefix
-    _PREFIX = ('$p$', '$n$', '$\mu$', '$m$', "", '$K$', '$M$', '$G$')
+    _PREFIX = ('p', 'n', '\mu', 'm', "", 'K', 'M', 'G')
     _UNIT_OFFSET = 4
 
     # Handling negative numbers and zero
