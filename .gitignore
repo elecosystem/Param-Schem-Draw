@@ -94,3 +94,4 @@ IMAGENS
 *.sagews
 *.py~
 *.py.swp
+.OUTPUT

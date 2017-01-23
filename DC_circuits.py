@@ -12,11 +12,9 @@ import SchemDraw.elements as e
 # Import library to parametrize the used of SchemDraw
 from ParamSchemDraw import electricComponent, resistor, vSource
 
-
-
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
-path = ""   
+
 # Image extension
 extension = '.png'
 
@@ -24,14 +22,14 @@ extension = '.png'
 # Circuit Example
 
 # TODO
-# change params to **kwargs ??
+# change params to **kwargs 
 # modify classes to support location of label.
 #
 def example_01(params, ekey, label=True):
     # Parameters
     V1 = vSource(params['$V_1$'], '$V_1$')
     V2 = vSource(params['$V_2$'], '$V_2$')
-
+    
     R1 = resistor(params['$R_1$'], '$R_1$')
     R2 = resistor(params['$R_2$'], '$R_2$')
     R3 = resistor(params['$R_3$'], '$R_3$')
@@ -41,7 +39,7 @@ def example_01(params, ekey, label=True):
     d = schem.Drawing()
 
     # add the first voltage source, his name, the first resistor and a dot
-    V1.schem = d.add( e.SOURCE_V, label= V1.label )
+    V1.schem = d.add( e.SOURCE_V , label=V1.label)
     R1.schem = d.add( e.RES, d='right', label= R1.label )
     d.add( e.DOT )
 
@@ -73,22 +71,21 @@ def example_01(params, ekey, label=True):
 
     # Add labels if the circuit requires parametrization
     if label:
-        V1.schem.add_label(V1.voltage, loc='bot')
-        V2.schem.add_label(V2.voltage, loc='bot')
-        R1.schem.add_label(R1.resistance, loc='bot')
-        R2.schem.add_label(R2.resistance, loc='bot')
-        R3.schem.add_label(R3.resistance, loc='bot')
-        R4.schem.add_label(R4.resistance, loc='bot')
+        V1.schem.add_label(V1.voltageEng, loc='bot')
+        V2.schem.add_label(V2.voltageEng, loc='bot')
+        R1.schem.add_label(R1.resistanceEng, loc='bot')
+        R2.schem.add_label(R2.resistanceEng, loc='bot')
+        R3.schem.add_label(R3.resistanceEng, loc='bot')
+        R4.schem.add_label(R4.resistanceEng, loc='bot')
 
     # draw the circuit, but don't show
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID + parametrize identifier + extension)
-    filename = 'test_01' + str(ekey) + extension
+    filename = 'test_0_' + str(ekey) + extension
     d.save(path + filename)
 
     # close all open plots
-    matplotlib.plyplot.close('all')
+    matplotlib.pyplot.close('all')
 
-    # return filename
     return filename
