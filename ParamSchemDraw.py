@@ -13,10 +13,32 @@
 '''
 
 from math import floor, log10
-
+from random import randint, choice
 
 class electricComponent(object):
-    pass
+    def ultraLowRandom():
+        return randint(1, 100)
+
+    def veryLowRandom():
+        veryLowValues = range(100, 500, 10)
+        return choice(veryLowValues)
+
+    def lowRandom():
+        lowValues = range(500, 1000, 50)
+        return choice(lowValues)
+
+    def middleRandom():
+        middleValues = range(1000, 10000, 100)
+        return choice(middleValues)
+
+    def highRandom():
+        return choice(range(10 * 10 ** 3, 100 * 10 ** 3, 1000))
+
+    def veryHighRandom():
+        return choice(range(100 * 10 ** 3, 1 * 10 ** 6, 10 * 10 ** 3))
+
+    def ultraHighRandom():
+        return choice(range(1 * 10 ** 6, 100 * 10 ** 6, 1 * 10 ** 6))
 
 class resistor(electricComponent):
     '''
