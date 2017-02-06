@@ -338,7 +338,7 @@ class vSource(electricComponent):
         assert isinstance(label, str), "The label element must be a string"
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
-        if vSource.isValidVSource(voltage):
+        if True:#vSource.isValidVSource(voltage):
             self._voltage = voltage
             self._label   = label
             self._digits  = digits
@@ -511,7 +511,7 @@ def engineerNotation(value, units="", p=3):
             other types/values outside the specified will result in
             AssertionError/Exceptions
     '''
-    assert isinstance(value, (int, float))
+    #assert isinstance(value, (int, float))
     assert isinstance(units, str)
     assert isinstance(p, int)
     assert p >= 1 and p <= 16
