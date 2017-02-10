@@ -16,28 +16,39 @@ from math import floor, log10
 from random import randint, choice
 
 class electricComponent(object):
-    def ultraLowRandom():
+    @classmethod
+    def logRandom(begin, end):
+        return choice(range(begin, end, end/10))
+
+    @classmethod
+    def ultraLowUniformRandom(cls):
         return randint(1, 100)
 
-    def veryLowRandom():
+    @classmethod
+    def veryLowUniformRandom(cls):
         veryLowValues = range(100, 500, 10)
         return choice(veryLowValues)
 
-    def lowRandom():
+    @classmethod
+    def lowUniformRandom(cls):
         lowValues = range(500, 1000, 50)
         return choice(lowValues)
 
-    def middleRandom():
+    @classmethod
+    def middleUniformRandom(cls):
         middleValues = range(1000, 10000, 100)
         return choice(middleValues)
 
-    def highRandom():
+    @classmethod
+    def highUniformRandom(cls):
         return choice(range(10 * 10 ** 3, 100 * 10 ** 3, 1000))
 
-    def veryHighRandom():
+    @classmethod
+    def veryHighUniformRandom(cls):
         return choice(range(100 * 10 ** 3, 1 * 10 ** 6, 10 * 10 ** 3))
 
-    def ultraHighRandom():
+    @classmethod
+    def ultraHighUniformRandom(cls):
         return choice(range(1 * 10 ** 6, 100 * 10 ** 6, 1 * 10 ** 6))
 
 class resistor(electricComponent):
@@ -114,7 +125,7 @@ class resistor(electricComponent):
     @property
     def resistance(self):
         return self._resistance
-
+    
     @property
     def resistanceEng(self):
         '''
