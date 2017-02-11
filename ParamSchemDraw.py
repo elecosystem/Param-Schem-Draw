@@ -13,44 +13,66 @@
 '''
 
 from math import floor, log10
-from random import randint, choice
+from random import randint
 
 class electricComponent(object):
 
-    @classmethod
-    def logRandom(cls, begin, end):
-        return choice(range(begin, end, end/10))
+    @staticmethod
+    def elecRandom(begin, end, step=1, expArg=""):
+        '''
+            USAGE: elecRandom(begin, end, step, expArg)
+                   relecRandom(begin, end, step)
+                   relecRandom(begin, end)
 
-    @classmethod
-    def ultraLowUniformRandom(cls):
-        return randint(1, 100)
+            ARGUMENTS:
+                begin  -> begin of the interval
+                end    -> end of the interval
+                step   -> minimum distance between one number and the next
+                expArg -> magnitude of the random number.
 
-    @classmethod
-    def veryLowUniformRandom(cls):
-        veryLowValues = range(100, 500, 10)
-        return choice(veryLowValues)
+            OUTPUT: random number between [begin, end] with the desired step and
+                    10^expArg magnitude
 
-    @classmethod
-    def lowUniformRandom(cls):
-        lowValues = range(500, 1000, 50)
-        return choice(lowValues)
+            CONSTRAINTS:
+                * begin must be a postive number. Float and Integer are supported
+                * end must be a postive number, bigger than begin. Float and
+                  Integer are supported
+                * step must be a postive number, smaller than the interval
+                  (begin - end). Float and Integer are supported
+                * expArg must be a integer in the interval [-12, 9] or a string
+                  containing the enginner magnitude identifier:
+                    - p, for pico
+                    - n, for nano
+                    - u, for micro
+                    - m, for mili
+                    - '' (empty string), for unit
+                    - K, for Kilo
+                    - M, for Mega
+                    - G, for Giga
 
-    @classmethod
-    def middleUniformRandom(cls):
-        middleValues = range(1000, 10000, 100)
-        return choice(middleValues)
+                other types/values outside the specified will result in
+                AssertionError/Exceptions
+        '''
+        assert begin > 0
+        assert end  > 0 and end > begin
+        assert step > 0 and step <= (end - begin)
 
-    @classmethod
-    def highUniformRandom(cls):
-        return choice(range(10 * 10 ** 3, 100 * 10 ** 3, 1000))
+        EngPrefix = {'p':-12, 'n':-9, 'u':-6, 'm':-3, "":0, 'K':3, 'M':6, 'G':9}
 
-    @classmethod
-    def veryHighUniformRandom(cls):
-        return choice(range(100 * 10 ** 3, 1 * 10 ** 6, 10 * 10 ** 3))
+        if type(expArg) == str:
+            try:
+                exponent = 10 ** EngPrefix[expArg]
+            except KeyError:
+                raise KeyError('The enginner prefix accepted are p, n, u, m, K, M, G')
+        elif type(expArg) == int:
+            if(expArg >= -12 and expArg <= 9):
+                exponent = 10 ** expArg
+            else:
+                raise ValueOutsideReasonableBounds
+        else:
+            raise TypeError
 
-    @classmethod
-    def ultraHighUniformRandom(cls):
-        return choice(range(1 * 10 ** 6, 100 * 10 ** 6, 1 * 10 ** 6))
+        return (randint(0, int((end - begin) / step)) * step + begin) * exponent
 
 class resistor(electricComponent):
     '''
