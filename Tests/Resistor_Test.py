@@ -58,7 +58,21 @@ except AssertionError:
 
 # E24 series
 print "\n\n"
-print resistor.E24()
+print "E24 resistors"
+for k in range(1, 10):
+    print resistor.E24()
+
+print "E12 resistors"
+for k in range(1, 10):
+    print resistor.E12()
+
+print "E24 resistors - Eng notation"
+for k in range(1, 10):
+    print resistor.E24_Eng()
+
+print "E12 resistors - Eng notation"
+for k in range(1, 10):
+    print resistor.E12_Eng()
 print "\n\n"
 
 
@@ -254,5 +268,5 @@ print resistor.voltageDivider(10, 10000, 5)
 print "\n\n"
 aux = resistor.currentDivider(10, 200, 5)
 print aux
-print enginnerNotation(aux, resistor.unit())
+print engineerNotation(aux, resistor.unit())
 print resistor.currentDivider(10, 2, 5)
