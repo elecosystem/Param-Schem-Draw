@@ -17,3 +17,14 @@ for k in range(1, 10):
     print "Very High Random [Integer] (100K - 1M with steps of 10K): " + str(electricComponent.veryHighUniformRandom())
     print "Ultra Low Random [Integer] (1M - 100M with steps of 1M): " + str(electricComponent.ultraHighUniformRandom())
     print "\n"
+
+print "\n\n"
+
+# Using logRandom
+for k in range(1, 4):
+    print "logRandom: " + str(electricComponent.logRandom(1, 10))
+    print "logRandom: " + str(electricComponent.logRandom(10, 101))
+    print "logRandom: " + str(electricComponent.logRandom(45, 99))
+    print "logRandom: " + str(electricComponent.logRandom(55, 57))
+    print "logRandom: " + str(electricComponent.logRandom(3, 45))
+    print "\n"
