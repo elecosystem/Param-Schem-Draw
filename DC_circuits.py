@@ -123,7 +123,53 @@ def DC_001(ekey, label=True, **kwargs):
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID + parametrize identifier + extension)
-    filename = 'DC_001' + str(ekey) + extension
+    filename = 'DC_001_' + str(ekey) + extension
+    d.save(path + filename)
+
+    matplotlib.pyplot.close('all')
+
+    return filename
+
+def DC_002(ekey, label=True, **kwargs):
+    V1 = kwargs['V1']
+    V2 = kwargs['V2']
+    R1 = kwargs['R1']
+    R2 = kwargs['R2']
+    R3 = kwargs['R3']
+    R4 = kwargs['R4']
+
+    d = schem.Drawing()
+    V1.schem = d.add( e.SOURCE_V , label=V1.label)
+    R1.schem = d.add( e.RES, d='right', label= R1.label )
+    d.add( e.DOT )
+    d.push()
+    R2.schem = d.add( e.RES, d='down', label= R2.label )
+    d.add( e.DOT )
+    d.pop()
+    R3.schem = d.add( e.RES, d='right', label= R3.label )
+    d.add( e.DOT )
+    d.push()
+    V2.schem = d.add( e.SOURCE_V, d='down', reverse='True', label= V2.label )
+    d.add( e.DOT )
+    d.pop()
+    d.add( e.LINE, d='right', l=2.5)
+    R4.schem = d.add( e.RES, d='down', label= R4.label )
+    d.add( e.LINE, to=V1.schem.start )
+    d.add( e.DOT )
+    d.add( e.GND )
+
+    if label:
+        V1.schem.add_label(V1.voltageEng, loc='bot')
+        V2.schem.add_label(V2.voltageEng, loc='bot')
+        R1.schem.add_label(R1.resistanceEng, loc='bot')
+        R2.schem.add_label(R2.resistanceEng, loc='bot')
+        R3.schem.add_label(R3.resistanceEng, loc='bot')
+        R4.schem.add_label(R4.resistanceEng, loc='bot')
+
+    d.draw(showplot = False)
+
+    # save schematic (full path + Circuit ID + parametrize identifier + extension)
+    filename = 'DC_002_' + str(ekey) + extension
     d.save(path + filename)
 
     matplotlib.pyplot.close('all')
