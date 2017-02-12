@@ -88,12 +88,12 @@ def example_01(params, ekey, label=True):
 
     return filename
 
-def DC_001(params, ekey, label=True):
-    V1 = vSource(params['$V_1$'], '$V_1$')
-    V2 = vSource(params['$V_2$'], '$V_2$')
-    I1 = vSource(params['$I_1$'], '$I_1$')
-    I2 = vSource(params['$I_2$'], '$I_2$')
-    I3 = vSource(params['$I_1$'], '$I_3$')
+def DC_001(ekey, label=True, **kwargs):
+    V1 = kwargs['V1']
+    V2 = kwargs['V2']
+    I1 = kwargs['I1']
+    I2 = kwargs['I2']
+    I3 = kwargs['I3']
 
     d = schem.Drawing()
     I1.schem = d.add( e.SOURCE_I , reverse='True', label=I1.label)
@@ -102,11 +102,11 @@ def DC_001(params, ekey, label=True):
     d.add( e.DOT )
     V2.schem = d.add( e.SOURCE_V, d='down', reverse='True', label= V2.label )
     d.pop()
-    d.add( e.LINE, d='right', l=2.5)
+    d.add( e.LINE, d='right', l=3)
     d.push()
     I2.schem = d.add( e.SOURCE_I, d='down', label= I2.label )
     d.pop()
-    d.add( e.LINE, d='right', l=2.5)
+    d.add( e.LINE, d='right', l=3)
     d.push()
     I3.schem = d.add( e.SOURCE_I, d='down', reverse='True', label= I3.label )
     d.add( e.LINE, to=I1.schem.end )
@@ -123,7 +123,7 @@ def DC_001(params, ekey, label=True):
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID + parametrize identifier + extension)
-    filename = 'test_0_' + str(ekey) + extension
+    filename = 'DC_001' + str(ekey) + extension
     d.save(path + filename)
 
     matplotlib.pyplot.close('all')
