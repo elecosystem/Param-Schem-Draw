@@ -95,3 +95,4 @@ IMAGENS
 *.py~
 *.py.swp
 .OUTPUT
+*.png
