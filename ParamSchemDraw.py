@@ -483,6 +483,7 @@ class vSource(electricComponent):
             Check if V is a valid value for voltage.
             It must be a non zero integer or float
         '''
+        return True
         if isinstance(V, (int, float, complex)):
             if V != 0:
                 return True
@@ -572,6 +573,7 @@ class iSource(electricComponent):
             Check if I is a valid value for current.
             It must be a non zero integer or float
         '''
+        return True
         if isinstance(I, (int, float, complex)):
             if I != 0:
                 return True
