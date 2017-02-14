@@ -13,6 +13,7 @@ from ParamSchemDraw import electricComponent, resistor, vSource, iSource
 
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
+
 # Image extension
 extension = '.png'
 
@@ -141,7 +142,7 @@ def DC_002(ekey, label=True, **kwargs):
     d = schem.Drawing()
     V1.schem = d.add( e.SOURCE_V , label=V1.label)
     R1.schem = d.add( e.RES, d='right', label= R1.label )
-    d.add( e.DOT )
+    Va = d.add( e.DOT )
     d.push()
     R2.schem = d.add( e.RES, d='down', label= R2.label )
     d.add( e.DOT )
@@ -152,7 +153,7 @@ def DC_002(ekey, label=True, **kwargs):
     V2.schem = d.add( e.SOURCE_V, d='down', reverse='True', label= V2.label )
     d.add( e.DOT )
     d.pop()
-    d.add( e.LINE, d='right', l=2.5)
+    d.add( e.LINE, d='right', l=3)
     R4.schem = d.add( e.RES, d='down', label= R4.label )
     d.add( e.LINE, to=V1.schem.start )
     d.add( e.DOT )
@@ -165,10 +166,12 @@ def DC_002(ekey, label=True, **kwargs):
         R2.schem.add_label(R2.resistanceEng, loc='bot')
         R3.schem.add_label(R3.resistanceEng, loc='bot')
         R4.schem.add_label(R4.resistanceEng, loc='bot')
-
+        
+        Va.add_label('$V_A$', loc='top')
+        
     d.draw(showplot = False)
 
-    # save schematic (full path + Circuit ID + parametrize identifier + extension)
+    # save schematic (full path + Circuit ID  + parametrize identifier + extension)
     filename = 'DC_002_' + str(ekey) + extension
     d.save(path + filename)
 

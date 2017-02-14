@@ -198,6 +198,7 @@ class resistor(electricComponent):
             Check if R is a valid value for resistance.
             It must be a positive integer or float
         '''
+        return True
         if isinstance(R, (int, float)):
             if R > 0:
                 return True
@@ -412,7 +413,7 @@ class vSource(electricComponent):
                    vSource(voltage)
 
             ARGUMENTS:
-                voltage  -> voltage value for the given voltage source element
+                voltage -> voltage value for the given voltage source element
                 label  -> name/identifier of the voltage source (optional)
                 digits -> number of significant digits to use in enginnering notation
 
@@ -429,7 +430,7 @@ class vSource(electricComponent):
         assert isinstance(label, str), "The label element must be a string"
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
-        if True:#vSource.isValidVSource(voltage):
+        if vSource.isValidVSource(voltage):
             self._voltage = voltage
             self._label   = label
             self._digits  = digits
@@ -520,6 +521,7 @@ class iSource(electricComponent):
         assert isinstance(label, str), "The label element must be a string"
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
+        
         if iSource.isValidISource(current):
             self._current = current
             self._label   = label
@@ -604,7 +606,7 @@ def engineerNotation(value, units="", p=3):
             other types/values outside the specified will result in
             AssertionError/Exceptions
     '''
-    #assert isinstance(value, (int, float))
+    # assert isinstance(value, (int, float))
     assert isinstance(units, str)
     assert isinstance(p, int)
     assert p >= 1 and p <= 16
