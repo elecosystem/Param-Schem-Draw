@@ -12,7 +12,7 @@ import SchemDraw.elements as e
 from ParamSchemDraw import electricComponent, resistor, vSource, iSource
 
 # Folder to save the schematics in server
-path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
+path = ""#'/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
 
 # Image extension
 extension = '.png'
@@ -166,9 +166,9 @@ def DC_002(ekey, label=True, **kwargs):
         R2.schem.add_label(R2.resistanceEng, loc='bot')
         R3.schem.add_label(R3.resistanceEng, loc='bot')
         R4.schem.add_label(R4.resistanceEng, loc='bot')
-        
+
         Va.add_label('$V_A$', loc='top')
-        
+
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID  + parametrize identifier + extension)
@@ -179,23 +179,24 @@ def DC_002(ekey, label=True, **kwargs):
 
     return filename
 
-
-def DC_002_Th(ekey, label=True, **kwargs):
+def DC_002_VA(ekey, label=True, **kwargs):
     V1 = kwargs['V1']
     R1 = kwargs['R1']
     R2 = kwargs['R2']
-
 
     d = schem.Drawing()
     V1.schem = d.add( e.SOURCE_V , label=V1.label)
     R1.schem = d.add( e.RES, d='right', label= R1.label )
     d.add( e.DOT )
     d.push()
-    d.add(e.LINE, l=3)
+    d.add(e.LINE, l=1)
     Va = d.add(e.DOT_OPEN)
+    d.pop()
     R2.schem = d.add( e.RES, d='down', label= R2.label )
-    d.add( e.LINE, to=V1.schem.start )
-    d.add( e.DOT )
+    d.push()
+    d.add(e.DOT)
+    d.add(e.LINE, l=1)
+    d.add(e.DOT_OPEN)
     d.pop()
     d.add( e.LINE, to=V1.schem.start )
     d.add( e.DOT )
@@ -203,18 +204,45 @@ def DC_002_Th(ekey, label=True, **kwargs):
 
     if label:
         V1.schem.add_label(V1.voltageEng, loc='bot')
-        V2.schem.add_label(V2.voltageEng, loc='bot')
         R1.schem.add_label(R1.resistanceEng, loc='bot')
         R2.schem.add_label(R2.resistanceEng, loc='bot')
-        R3.schem.add_label(R3.resistanceEng, loc='bot')
-        R4.schem.add_label(R4.resistanceEng, loc='bot')
-        
         Va.add_label('$V_A$', loc='top')
-        
+
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID  + parametrize identifier + extension)
-    filename = 'DC_002_' + str(ekey) + extension
+    filename = 'DC_002_VA_' + str(ekey) + extension
+    d.save(path + filename)
+
+    matplotlib.pyplot.close('all')
+
+    return filename
+
+def DC_002_VTh(ekey, label=True, **kwargs):
+    VTh = kwargs['VTh']
+    RTh = kwargs['RTh']
+
+    d = schem.Drawing()
+    d.push()
+    VTh.schem = d.add( e.SOURCE_V , label=VTh.label)
+    RTh.schem = d.add( e.RES, d='right', label= RTh.label )
+    d.add(e.DOT_OPEN)
+    d.pop()
+    d.add( e.GND )
+    d.add(e.DOT)
+    d.add(e.LINE, l=3)
+
+    d.add( e.DOT_OPEN )
+
+
+    if label:
+        VTh.schem.add_label(VTh.voltageEng, loc='bot')
+        RTh.schem.add_label(RTh.resistanceEng, loc='bot')
+
+    d.draw(showplot = False)
+
+    # save schematic (full path + Circuit ID  + parametrize identifier + extension)
+    filename = 'DC_002_VTh_' + str(ekey) + extension
     d.save(path + filename)
 
     matplotlib.pyplot.close('all')

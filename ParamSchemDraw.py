@@ -361,7 +361,7 @@ class resistor(electricComponent):
             assert resistor.isValidResistor(R2)
         else:
             R2 = float(R2._resistance)
-        
+
         if kwargs:
             if kwargs['iSource'] == True:
                 return iSource((R1 + R2) / R2 * I, "$I_{eq}$", 3)
@@ -397,10 +397,10 @@ class resistor(electricComponent):
             R2 = float(R2)
         else:
             R2 = R2._resistance
-            
+
         if kwargs:
             if kwargs['vSource'] == True:
-                return vSource((R1 + R2) / R2 * I, "$V_{eq}$", 3)
+                return vSource((R1 + R2) / R2 * V, "$V_{eq}$", 3)
         return R2 / (R1 + R2)  * V
 
 
@@ -527,7 +527,7 @@ class iSource(electricComponent):
         assert isinstance(label, str), "The label element must be a string"
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
-        
+
         if iSource.isValidISource(current):
             self._current = current
             self._label   = label
