@@ -12,7 +12,7 @@ import SchemDraw.elements as e
 from ParamSchemDraw import electricComponent, resistor, vSource, iSource
 
 # Folder to save the schematics in server
-path = ""#'/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
+path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
 
 # Image extension
 extension = '.png'
@@ -21,7 +21,6 @@ extension = '.png'
 # Circuit Example
 
 # TODO
-# change params to **kwargs
 # modify classes to support location of label. ? Is it really necessary?
 
 def example_01(params, ekey, label=True):

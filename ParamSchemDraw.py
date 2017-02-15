@@ -9,7 +9,7 @@
     supports unit appending and number of significant digits
 
     Author: Pedro Martins
-    version: 0.1
+    version: 0.1.2
 '''
 
 from math import floor, log10
@@ -162,14 +162,19 @@ class resistor(electricComponent):
     def resistance(self):
         return self._resistance
 
-    @property
-    def resistanceEng(self):
+    
+    def resistanceEng(self, latex=True):
         '''
             Outputs the resistance of the resistor in enginnering notation,
             appending the ohms unit and using the significant number of digits
             defined when the object was created
+            
+            The latex argument controls the wrapping of the unit. If latex=False, 
+            then the unit has no equation latex marker, '$', wrapping the latex command
+            for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
-        return engineerNotation(self._resistance, resistor.__UNIT)
+        unit = resistor.__UNIT if latex else '\Omega'
+        return engineerNotation(self._resistance, unit, self._digits)
 
     @property
     def label(self):
@@ -333,6 +338,51 @@ class resistor(electricComponent):
                 return resistor(req, "$R_{eq}$", digits)
         else:
             return req
+        
+    @staticmethod
+    def voltageDivider(V, R1, R2, **kwargs):
+        '''
+            Computes the voltage drop across the resistor R2 in a voltage divider
+            formed by the series association of resistances R1 and R2, such as
+            shown below
+                                    ---V----R1---+--o
+                                                 |
+                                                 R2
+                                                 |
+                                    -------GND---+--o
+            "V" can either be a vSource object or a valid voltage value
+            R1 and R2 can either be a resistor object or a valid resistance value
+        '''
+        if  isinstance(V, vSource):
+            V = V._voltage
+        elif vSource.isValidVSource(V):
+            V = float(V)
+        else:
+            raise InvalidIndependentSource
+            
+        if  isinstance(R1, resistor):
+            R1 = R1._resistance
+        elif resistor.isValidResistor(R1):
+            R1 = float(R1)
+        else:
+            raise InvalidResistor
+            
+        if  isinstance(R2, resistor):
+            R2 = R2._resistance
+        elif resistor.isValidResistor(R2):
+            R2 = float(R2)
+        else:
+            raise InvalidResistor
+        
+        if  isinstance(V, vSource) or isinstance((R1, R2),  resistor):
+            digits = min(V._digits, R1._digits, R2._digits)
+        else:
+            digits = 3
+            
+        if kwargs:
+            if kwargs['vSource'] == True:
+                return vSource(float(R2) / (R1 + R2) * V, "$V_{eq}$", digits)
+        return R2 / (R1 + R2)  * V
 
     @staticmethod
     def currentDivider(I, R1, R2, **kwargs):
@@ -367,41 +417,6 @@ class resistor(electricComponent):
                 return iSource((R1 + R2) / R2 * I, "$I_{eq}$", 3)
         return (R1 + R2) / R2 * I
 
-    @staticmethod
-    def voltageDivider(V, R1, R2, **kwargs):
-        '''
-            Computes the voltage drop across the resistor R2 in a voltage divider
-            formed by the series association of resistances R1 and R2, such as
-            shown below
-                                    ---V----R1---+--o
-                                                 |
-                                                 R2
-                                                 |
-                                    -------GND---+--o
-            "V" can either be a vSource object or a valid voltage value
-            R1 and R2 can either be a resistor object or a valid resistance value
-        '''
-
-        if  not isinstance(V, vSource):
-            assert vSource.isValidVSource(V)
-            V = float(V)
-        else:
-            V = V.voltage
-        if  not isinstance(R1, resistor):
-            assert resistor.isValidResistor(R1)
-            R1 = float(R1)
-        else:
-            R1 = R1._resistance
-        if  not isinstance(R2, resistor):
-            assert resistor.isValidResistor(R2)
-            R2 = float(R2)
-        else:
-            R2 = R2._resistance
-
-        if kwargs:
-            if kwargs['vSource'] == True:
-                return vSource((R1 + R2) / R2 * V, "$V_{eq}$", 3)
-        return R2 / (R1 + R2)  * V
 
 
 
@@ -672,7 +687,7 @@ def engineerNotation(value, units="", p=3):
         # Smaller than lowest unit or higher than higher unit
         raise ValueOutsideReasonableBounds
 
-    return "{}{}{} {}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
+    return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
 
 
