@@ -162,14 +162,14 @@ class resistor(electricComponent):
     def resistance(self):
         return self._resistance
 
-    
+
     def resistanceEng(self, latex=True):
         '''
             Outputs the resistance of the resistor in enginnering notation,
             appending the ohms unit and using the significant number of digits
             defined when the object was created
-            
-            The latex argument controls the wrapping of the unit. If latex=False, 
+
+            The latex argument controls the wrapping of the unit. If latex=False,
             then the unit has no equation latex marker, '$', wrapping the latex command
             for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
@@ -338,9 +338,9 @@ class resistor(electricComponent):
                 return resistor(req, "$R_{eq}$", digits)
         else:
             return req
-        
+
     @staticmethod
-    def voltageDivider(V, R1, R2, **kwargs):
+    def voltageDivider(V, R1, R2,label="$V_{eq}$", **kwargs):
         '''
             Computes the voltage drop across the resistor R2 in a voltage divider
             formed by the series association of resistances R1 and R2, such as
@@ -359,33 +359,33 @@ class resistor(electricComponent):
             V = float(V)
         else:
             raise InvalidIndependentSource
-            
+
         if  isinstance(R1, resistor):
             R1 = R1._resistance
         elif resistor.isValidResistor(R1):
             R1 = float(R1)
         else:
             raise InvalidResistor
-            
+
         if  isinstance(R2, resistor):
             R2 = R2._resistance
         elif resistor.isValidResistor(R2):
             R2 = float(R2)
         else:
             raise InvalidResistor
-        
+
         if  isinstance(V, vSource) or isinstance((R1, R2),  resistor):
             digits = min(V._digits, R1._digits, R2._digits)
         else:
             digits = 3
-            
+
         if kwargs:
             if kwargs['vSource'] == True:
-                return vSource(R2 / (R1 + R2) * float(V), "$V_{eq}$", digits)
+                return vSource(R2 / (R1 + R2) * float(V), label, digits)
         return R2 / (R1 + R2)  * float(V)
 
     @staticmethod
-    def currentDivider(I, R1, R2, **kwargs):
+    def currentDivider(I, R1, R2, label="$I_{eq}$", **kwargs):
         '''
             Computes the current that flows trough R2 in a current divider
             formed by the parallel association of resistances R1 and R2, such as
@@ -405,21 +405,21 @@ class resistor(electricComponent):
             I = float(I)
         else:
             raise InvalidIndependentSource
-            
+
         if  isinstance(R1, resistor):
             R1 = R1._resistance
         elif resistor.isValidResistor(R1):
             R1 = float(R1)
         else:
             raise InvalidResistor
-            
+
         if  isinstance(R2, resistor):
             R2 = R2._resistance
         elif resistor.isValidResistor(R2):
             R2 = float(R2)
         else:
             raise InvalidResistor
-        
+
         if  isinstance(I, iSource) or isinstance((R1, R2),  resistor):
             digits = min(I._digits, R1._digits, R2._digits)
         else:
@@ -427,7 +427,7 @@ class resistor(electricComponent):
 
         if kwargs:
             if kwargs['iSource'] == True:
-                return iSource((R1 + R2) / R2 * float(I), "$I_{eq}$", 3)
+                return iSource((R1 + R2) / R2 * float(I), label, 3)
         return (R1 + R2) / R2 * float(I)
 
 
@@ -646,7 +646,7 @@ def engineerNotation(value, units="", p=3):
     assert p >= 1 and p <= 16
 
     # Engineering units prefixes and offset to unitary prefix
-    _PREFIX = ('p', 'n', '\mu', 'm', "", 'K', 'M', 'G')
+    _PREFIX = ('p', 'n', '$\mu$', 'm', "", 'K', 'M', 'G')
     _UNIT_OFFSET = 4
 
     # Handling negative numbers and zero

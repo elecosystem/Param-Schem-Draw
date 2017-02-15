@@ -12,7 +12,7 @@ import SchemDraw.elements as e
 from ParamSchemDraw import electricComponent, resistor, vSource, iSource
 
 # Folder to save the schematics in server
-path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
+path = ""#'/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
 
 # Image extension
 extension = '.png'
@@ -220,6 +220,8 @@ def DC_002_VA(ekey, label=True, **kwargs):
 def DC_002_VTh(ekey, label=True, **kwargs):
     VTh = kwargs['VTh']
     RTh = kwargs['RTh']
+    VTh.label = '$V_{Th}$'
+    RTh.label = '$R_{Th}$'
 
     d = schem.Drawing()
     d.push()
@@ -236,12 +238,53 @@ def DC_002_VTh(ekey, label=True, **kwargs):
 
     if label:
         VTh.schem.add_label(VTh.voltageEng, loc='bot')
-        RTh.schem.add_label(RTh.resistanceEng, loc='bot')
+        RTh.schem.add_label(RTh.resistanceEng(), loc='bot')
 
     d.draw(showplot = False)
 
     # save schematic (full path + Circuit ID  + parametrize identifier + extension)
     filename = 'DC_002_VTh_' + str(ekey) + extension
+    d.save(path + filename)
+
+    matplotlib.pyplot.close('all')
+
+    return filename
+
+def DC_002_Ino(ekey, label=True, **kwargs):
+    Ino = kwargs['Ino']
+    Rno = kwargs['Rno']
+    Ino.label = '$I_{no}$'
+    Rno.label = '$R_{no}$'
+
+
+    d = schem.Drawing()
+    Ino.schem = d.add( e.SOURCE_I , reverse=True, label=Ino.label)
+    d.add(e.LINE, l=4, d='right')
+    d.push()
+    Rno.schem = d.add( e.RES, d='down', label= Rno.label )
+    d.push()
+    d.add(e.LINE, to=Ino.schem.end)
+    d.add( e.GND )
+    d.add(e.DOT)
+    d.pop()
+    d.add(e.LINE, l=1, d='right')
+    d.add(e.DOT_OPEN)
+    d.pop()
+
+
+    d.add(e.LINE, l=1)
+
+    d.add( e.DOT_OPEN )
+
+
+    if label:
+        Ino.schem.add_label(Ino.currentEng, loc='bot')
+        Rno.schem.add_label(Rno.resistanceEng(), loc='bot')
+
+    d.draw(showplot = False)
+
+    # save schematic (full path + Circuit ID  + parametrize identifier + extension)
+    filename = 'DC_002_Ino_' + str(ekey) + extension
     d.save(path + filename)
 
     matplotlib.pyplot.close('all')
