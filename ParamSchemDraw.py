@@ -615,7 +615,7 @@ class iSource(electricComponent):
                 return True
         return False
 
-def engineerNotation(value, units="", p=3):
+def engineerNotation(value, units="", p=3, latex=True):
     '''
         Formats a number to engineering notation using p significant digits,
         appending the given unit after the magnitude prefix
@@ -646,7 +646,11 @@ def engineerNotation(value, units="", p=3):
     assert p >= 1 and p <= 16
 
     # Engineering units prefixes and offset to unitary prefix
-    _PREFIX = ('p', 'n', '$\mu$', 'm', "", 'K', 'M', 'G')
+    if latex:
+        _PREFIX = ('p', 'n', '$\mu$', 'm', "", 'K', 'M', 'G')
+    else:
+        _PREFIX = ('p', 'n', '\mu{}', 'm', "", 'K', 'M', 'G')
+        
     _UNIT_OFFSET = 4
 
     # Handling negative numbers and zero
@@ -699,7 +703,7 @@ def engineerNotation(value, units="", p=3):
     if (engPrefix < 0) or (engExp > len(_PREFIX)-1):
         # Smaller than lowest unit or higher than higher unit
         raise ValueOutsideReasonableBounds
-
+        
     return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
 

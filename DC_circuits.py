@@ -12,7 +12,7 @@ import SchemDraw.elements as e
 from ParamSchemDraw import electricComponent, resistor, vSource, iSource
 
 # Folder to save the schematics in server
-path = ""#'/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
+path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
 
 # Image extension
 extension = '.png'
@@ -157,14 +157,15 @@ def DC_002(ekey, label=True, **kwargs):
     d.add( e.LINE, to=V1.schem.start )
     d.add( e.DOT )
     d.add( e.GND )
-
+    
+    
     if label:
         V1.schem.add_label(V1.voltageEng, loc='bot')
         V2.schem.add_label(V2.voltageEng, loc='bot')
-        R1.schem.add_label(R1.resistanceEng, loc='bot')
-        R2.schem.add_label(R2.resistanceEng, loc='bot')
-        R3.schem.add_label(R3.resistanceEng, loc='bot')
-        R4.schem.add_label(R4.resistanceEng, loc='bot')
+        R1.schem.add_label(R1.resistanceEng(), loc='bot')
+        R2.schem.add_label(R2.resistanceEng(), loc='bot')
+        R3.schem.add_label(R3.resistanceEng(), loc='bot')
+        R4.schem.add_label(R4.resistanceEng(), loc='bot')
 
         Va.add_label('$V_A$', loc='top')
 
@@ -203,8 +204,8 @@ def DC_002_VA(ekey, label=True, **kwargs):
 
     if label:
         V1.schem.add_label(V1.voltageEng, loc='bot')
-        R1.schem.add_label(R1.resistanceEng, loc='bot')
-        R2.schem.add_label(R2.resistanceEng, loc='bot')
+        R1.schem.add_label(R1.resistanceEng(), loc='bot')
+        R2.schem.add_label(R2.resistanceEng(), loc='bot')
         Va.add_label('$V_A$', loc='top')
 
     d.draw(showplot = False)
@@ -217,7 +218,7 @@ def DC_002_VA(ekey, label=True, **kwargs):
 
     return filename
 
-def DC_002_VTh(ekey, label=True, **kwargs):
+def DC_Thevenin(ekey, label=True, **kwargs):
     VTh = kwargs['VTh']
     RTh = kwargs['RTh']
     VTh.label = '$V_{Th}$'
@@ -250,7 +251,7 @@ def DC_002_VTh(ekey, label=True, **kwargs):
 
     return filename
 
-def DC_002_Ino(ekey, label=True, **kwargs):
+def DC_Norton(ekey, label=True, **kwargs):
     Ino = kwargs['Ino']
     Rno = kwargs['Rno']
     Ino.label = '$I_{no}$'
@@ -258,12 +259,12 @@ def DC_002_Ino(ekey, label=True, **kwargs):
 
 
     d = schem.Drawing()
-    Ino.schem = d.add( e.SOURCE_I , reverse=True, label=Ino.label)
+    Ino.schem = d.add( e.SOURCE_I , label=Ino.label)
     d.add(e.LINE, l=4, d='right')
     d.push()
     Rno.schem = d.add( e.RES, d='down', label= Rno.label )
     d.push()
-    d.add(e.LINE, to=Ino.schem.end)
+    d.add(e.LINE, to=Ino.schem.start)
     d.add( e.GND )
     d.add(e.DOT)
     d.pop()
