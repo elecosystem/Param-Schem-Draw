@@ -335,7 +335,7 @@ class resistor(electricComponent):
             return req
 
     @staticmethod
-    def currentDivider(I, R1, R2):
+    def currentDivider(I, R1, R2, **kwargs):
         '''
             Computes the current that flows trough R2 in a current divider
             formed by the parallel association of resistances R1 and R2, such as
@@ -349,7 +349,6 @@ class resistor(electricComponent):
             "I" can either be a iSource object or a valid current value
             R1 and R2 can either be a resistor object or a valid resistance value
         '''
-
         if not isinstance(I, iSource):
             assert iSource.isValidISource(I)
         else:
@@ -362,11 +361,14 @@ class resistor(electricComponent):
             assert resistor.isValidResistor(R2)
         else:
             R2 = float(R2._resistance)
-
+        
+        if kwargs:
+            if kwargs['iSource'] == True:
+                return iSource((R1 + R2) / R2 * I, "$I_{eq}$", 3)
         return (R1 + R2) / R2 * I
 
     @staticmethod
-    def voltageDivider(V, R1, R2):
+    def voltageDivider(V, R1, R2, **kwargs):
         '''
             Computes the voltage drop across the resistor R2 in a voltage divider
             formed by the series association of resistances R1 and R2, such as
@@ -390,13 +392,17 @@ class resistor(electricComponent):
             R1 = float(R1)
         else:
             R1 = R1._resistance
-        if  not isinstance(R1, resistor):
+        if  not isinstance(R2, resistor):
             assert resistor.isValidResistor(R2)
             R2 = float(R2)
         else:
             R2 = R2._resistance
+            
+        if kwargs:
+            if kwargs['vSource'] == True:
+                return vSource((R1 + R2) / R2 * I, "$V_{eq}$", 3)
+        return R2 / (R1 + R2)  * V
 
-        return R2 / (R1 + R2) * V
 
 
 class vSource(electricComponent):
@@ -666,7 +672,7 @@ def engineerNotation(value, units="", p=3):
         # Smaller than lowest unit or higher than higher unit
         raise ValueOutsideReasonableBounds
 
-    return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
+    return "{}{}{} {}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
 
 
 
