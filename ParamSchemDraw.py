@@ -381,8 +381,8 @@ class resistor(electricComponent):
             
         if kwargs:
             if kwargs['vSource'] == True:
-                return vSource(float(R2) / (R1 + R2) * V, "$V_{eq}$", digits)
-        return R2 / (R1 + R2)  * V
+                return vSource(R2 / (R1 + R2) * float(V), "$V_{eq}$", digits)
+        return R2 / (R1 + R2)  * float(V)
 
     @staticmethod
     def currentDivider(I, R1, R2, **kwargs):
@@ -399,23 +399,36 @@ class resistor(electricComponent):
             "I" can either be a iSource object or a valid current value
             R1 and R2 can either be a resistor object or a valid resistance value
         '''
-        if not isinstance(I, iSource):
-            assert iSource.isValidISource(I)
+        if  isinstance(I, iSource):
+            I = I._current
+        elif iSource.isValidISource(I):
+            I = float(I)
         else:
-            I = float(I.current)
-        if not isinstance(R1, resistor):
-            assert resistor.isValidResistor(R1)
+            raise InvalidIndependentSource
+            
+        if  isinstance(R1, resistor):
+            R1 = R1._resistance
+        elif resistor.isValidResistor(R1):
+            R1 = float(R1)
         else:
-            R1 = float(R1._resistance)
-        if not isinstance(R2, resistor):
-            assert resistor.isValidResistor(R2)
+            raise InvalidResistor
+            
+        if  isinstance(R2, resistor):
+            R2 = R2._resistance
+        elif resistor.isValidResistor(R2):
+            R2 = float(R2)
         else:
-            R2 = float(R2._resistance)
+            raise InvalidResistor
+        
+        if  isinstance(I, iSource) or isinstance((R1, R2),  resistor):
+            digits = min(I._digits, R1._digits, R2._digits)
+        else:
+            digits = 3
 
         if kwargs:
             if kwargs['iSource'] == True:
-                return iSource((R1 + R2) / R2 * I, "$I_{eq}$", 3)
-        return (R1 + R2) / R2 * I
+                return iSource((R1 + R2) / R2 * float(I), "$I_{eq}$", 3)
+        return (R1 + R2) / R2 * float(I)
 
 
 
