@@ -96,3 +96,4 @@ IMAGENS
 *.py.swp
 .OUTPUT
 *.png
+generate_DC_circuits.py
