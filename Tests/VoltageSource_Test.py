@@ -6,11 +6,11 @@
 import os, sys
 sys.path.insert(0,os.path.pardir)
 
-from ParamSchemDraw import *
+from vSource import *
 
 # Test assertions for invalid argument values
 try:
-    vSource(0)
+    vSource(0)  
 except InvalidIndepentSource:
     print "Assertion caught for InvalidIndepentSource. vSource value can't be zero"
 

@@ -6,7 +6,7 @@
 import os, sys
 sys.path.insert(0,os.path.pardir)
 
-from ParamSchemDraw import *
+from iSource import *
 
 # Test assertions for invalid argument values
 try:
