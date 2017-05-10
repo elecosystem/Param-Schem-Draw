@@ -1,5 +1,5 @@
 '''
-    Test the resistor output formatting
+    Test the capacitor output formatting
 
 '''
 
@@ -7,293 +7,293 @@
 import os, sys
 sys.path.insert(0,os.path.pardir)
 
-from resistor import *
+from capacitor import *
 
 # Test assertions for invalid argument values
 try:
-    resistor(0)
-except InvalidResistor:
-    print "Assertion caught for InvalidResistor. Resistor value can't be zero"
+    capacitor(0)
+except InvalidCapacitor:
+    print "Assertion caught for InvalidCapacitor. Capacitor value can't be zero"
 
 try:
-    resistor(-34)
-except InvalidResistor:
-    print "Assertion caught for InvalidResistor. Resistor value can't be negative"
+    capacitor(-34)
+except InvalidCapacitor:
+    print "Assertion caught for InvalidCapacitor. Capacitor value can't be negative"
 
 try:
-    resistor(-2323213.232, "", 3)
-except InvalidResistor:
-    print "Assertion caught for InvalidResistor. Resistor value can't be negative"
+    capacitor(-2323213.232, "", 3)
+except InvalidCapacitor:
+    print "Assertion caught for InvalidCapacitor. Capacitor value can't be negative"
 
 try:
-    print resistor(1.111111111111111111, "", 20)
+    print capacitor(1.111111111111111111, "", 20)
 except AssertionError:
     print "Assertion caught for required to high precision"
 
 try:
-    print resistor(1.111111111111111111, "", 0)
+    print capacitor(1.111111111111111111, "", 0)
 except AssertionError:
     print "Assertion caught for required invalid precision"
 
 try:
-    print resistor(1.111111111111111111, "", -2)
+    print capacitor(1.111111111111111111, "", -2)
 except AssertionError:
     print "Assertion caught for required invalid precision"
 
 # Test for invalid arguments types
 try:
-    resistor("cant be a string")
-except InvalidResistor:
-    print "Assertion caught for InvalidResistor. Resistor value can't be a string"
+    capacitor("cant be a string")
+except InvalidCapacitor:
+    print "Assertion caught for InvalidCesistor. Capacitor value can't be a string"
 
 try:
-    resistor(1, 3)
+    capacitor(1, 3)
 except AssertionError:
     print "Assertion caught for AssertionError. label can't be a number"
 
 try:
-    resistor("10", 3, "30")
+    capacitor("10", 3, "30")
 except AssertionError:
     print "Assertion caught for AssertionError. digits can't be a number"
 
 # E24 series
 print "\n\n"
-print "E24 resistors"
+print "E24 Capacitor"
 for k in range(1, 10):
-    print resistor.E24()
+    print capacitor.E24()
 
-print "E12 resistors"
+print "E12 capacitors"
 for k in range(1, 10):
-    print resistor.E12()
+    print capacitor.E12()
 
-print "E24 resistors - Eng notation"
+print "E24 capacitors - Eng notation"
 for k in range(1, 10):
-    print resistor.E24_Eng()
+    print capacitor.E24_Eng()
 
-print "E12 resistors - Eng notation"
+print "E12 capacitors - Eng notation"
 for k in range(1, 10):
-    print resistor.E12_Eng()
+    print capacitor.E12_Eng()
 print "\n\n"
 
 
-# Resistor testing examples
-R0  = resistor(1)
-R1  = resistor(10)
-R2  = resistor(100)
-R3  = resistor(1000)
-R4  = resistor(10000)
-R5  = resistor(100000)
-R6  = resistor(1000000)
-R7  = resistor(10000000)
-R8  = resistor(100000000)
-R9  = resistor(999)
-R10 = resistor(9999)
-R11 = resistor(6512)
-R12 = resistor(10345)
-R13 = resistor(1000000003)
-R14 = resistor(10000045)
-R15 = resistor(0.1)
-R16 = resistor(0.01)
-R17 = resistor(0.001)
-R18 = resistor(0.0001)
-R19 = resistor(0.00001)
-R20 = resistor(0.000001)
-R21 = resistor(0.000231)
-R22 = resistor(0.234)
-R23 = resistor(0.001234)
-R24 = resistor(0.000120)
-R25 = resistor(0.99999)
-R26 = resistor(0.00999)
-R27 = resistor(0.009)
-R28 = resistor(0.999999999)
-R29 = resistor(0.9200001)
-R30 = resistor(0.000001)
-R31 = resistor(0.192817)
-R32 = resistor(0.6512)
-R33 = resistor(0.06512)
-R34 = resistor(0.006512)
-R35 = resistor(0.0006512)
-R36 = resistor(0.009999)
-R37 = resistor(0.0009999)
+# Cesistor testing examples
+C0  = capacitor(1)
+C1  = capacitor(10)
+C2  = capacitor(100)
+C3  = capacitor(1000)
+C4  = capacitor(10000)
+C5  = capacitor(100000)
+C6  = capacitor(1000000)
+C7  = capacitor(10000000)
+C8  = capacitor(100000000)
+C9  = capacitor(999)
+C10 = capacitor(9999)
+C11 = capacitor(6512)
+C12 = capacitor(10345)
+C13 = capacitor(1000000003)
+C14 = capacitor(10000045)
+C15 = capacitor(0.1)
+C16 = capacitor(0.01)
+C17 = capacitor(0.001)
+C18 = capacitor(0.0001)
+C19 = capacitor(0.00001)
+C20 = capacitor(0.000001)
+C21 = capacitor(0.000231)
+C22 = capacitor(0.234)
+C23 = capacitor(0.001234)
+C24 = capacitor(0.000120)
+C25 = capacitor(0.99999)
+C26 = capacitor(0.00999)
+C27 = capacitor(0.009)
+C28 = capacitor(0.999999999)
+C29 = capacitor(0.9200001)
+C30 = capacitor(0.000001)
+C31 = capacitor(0.192817)
+C32 = capacitor(0.6512)
+C33 = capacitor(0.06512)
+C34 = capacitor(0.006512)
+C35 = capacitor(0.0006512)
+C36 = capacitor(0.009999)
+C37 = capacitor(0.0009999)
 
-# Raw printing
-print R0.resistance
-print R1.resistance
-print R2.resistance
-print R3.resistance
-print R4.resistance
-print R5.resistance
-print R6.resistance
-print R7.resistance
-print R8.resistance
-print R9.resistance
-print R10.resistance
-print R11.resistance
-print R12.resistance
-print R13.resistance
-print R14.resistance
-print R15.resistance
-print R16.resistance
-print R17.resistance
-print R18.resistance
-print R19.resistance
-print R20.resistance
-print R21.resistance
-print R22.resistance
-print R23.resistance
-print R24.resistance
-print R25.resistance
-print R26.resistance
-print R27.resistance
-print R28.resistance
-print R29.resistance
-print R30.resistance
-print R31.resistance
-print R32.resistance
-print R33.resistance
-print R34.resistance
-print R35.resistance
-print R36.resistance
-print R37.resistance
+# Caw printing
+print C0.capacitance
+print C1.capacitance
+print C2.capacitance
+print C3.capacitance
+print C4.capacitance
+print C5.capacitance
+print C6.capacitance
+print C7.capacitance
+print C8.capacitance
+print C9.capacitance
+print C10.capacitance
+print C11.capacitance
+print C12.capacitance
+print C13.capacitance
+print C14.capacitance
+print C15.capacitance
+print C16.capacitance
+print C17.capacitance
+print C18.capacitance
+print C19.capacitance
+print C20.capacitance
+print C21.capacitance
+print C22.capacitance
+print C23.capacitance
+print C24.capacitance
+print C25.capacitance
+print C26.capacitance
+print C27.capacitance
+print C28.capacitance
+print C29.capacitance
+print C30.capacitance
+print C31.capacitance
+print C32.capacitance
+print C33.capacitance
+print C34.capacitance
+print C35.capacitance
+print C36.capacitance
+print C37.capacitance
 
-# conductance
+# susceptance
 print("\n\nConductance")
-print R0.conductance
-print R1.conductance
-print R2.conductance
-print R3.conductance
-print R4.conductance
-print R5.conductance
-print R6.conductance
-print R7.conductance
-print R8.conductance
-print R9.conductance
+print C0.susceptance
+print C1.susceptance
+print C2.susceptance
+print C3.susceptance
+print C4.susceptance
+print C5.susceptance
+print C6.susceptance
+print C7.susceptance
+print C8.susceptance
+print C9.susceptance
 
 # Formated Printing - Engeneering Notation and latex symbols
 print("\n\nConductance Eng")
-print R0.conductanceEng
-print R1.conductanceEng
-print R2.conductanceEng
-print R3.conductanceEng
-print R4.conductanceEng
-print R5.conductanceEng
-print R6.conductanceEng
-print R7.conductanceEng
-print R8.conductanceEng
-print R9.conductanceEng
+print C0.susceptanceEng
+print C1.susceptanceEng
+print C2.susceptanceEng
+print C3.susceptanceEng
+print C4.susceptanceEng
+print C5.susceptanceEng
+print C6.susceptanceEng
+print C7.susceptanceEng
+print C8.susceptanceEng
+print C9.susceptanceEng
 
 
 # Formated Printing - Engeneering Notation and latex symbols
 print("\n\n")
-print R0.resistanceEng(True)
-print R1.resistanceEng
-print R2.resistanceEng
-print R3.resistanceEng
-print R4.resistanceEng
-print R5.resistanceEng
-print R6.resistanceEng
-print R8.resistanceEng
-print R9.resistanceEng
-print R7.resistanceEng
-print R10.resistanceEng
-print R11.resistanceEng
-print R13.resistanceEng
-print R12.resistanceEng
-print R14.resistanceEng
-print R15.resistanceEng
-print R16.resistanceEng
-print R17.resistanceEng
-print R18.resistanceEng
-print R19.resistanceEng
-print R20.resistanceEng
-print R21.resistanceEng
-print R23.resistanceEng
-print R22.resistanceEng
-print R24.resistanceEng
-print R25.resistanceEng
-print R27.resistanceEng
-print R26.resistanceEng
-print R28.resistanceEng
-print R29.resistanceEng
-print R30.resistanceEng
-print R31.resistanceEng
-print R32.resistanceEng
-print R33.resistanceEng
-print R34.resistanceEng
-print R35.resistanceEng
-print R36.resistanceEng
-print R37.resistanceEng
+print C0.capacitanceEng
+print C1.capacitanceEng
+print C2.capacitanceEng
+print C3.capacitanceEng
+print C4.capacitanceEng
+print C5.capacitanceEng
+print C6.capacitanceEng
+print C8.capacitanceEng
+print C9.capacitanceEng
+print C7.capacitanceEng
+print C10.capacitanceEng
+print C11.capacitanceEng
+print C13.capacitanceEng
+print C12.capacitanceEng
+print C14.capacitanceEng
+print C15.capacitanceEng
+print C16.capacitanceEng
+print C17.capacitanceEng
+print C18.capacitanceEng
+print C19.capacitanceEng
+print C20.capacitanceEng
+print C21.capacitanceEng
+print C23.capacitanceEng
+print C22.capacitanceEng
+print C24.capacitanceEng
+print C25.capacitanceEng
+print C27.capacitanceEng
+print C26.capacitanceEng
+print C28.capacitanceEng
+print C29.capacitanceEng
+print C30.capacitanceEng
+print C31.capacitanceEng
+print C32.capacitanceEng
+print C33.capacitanceEng
+print C34.capacitanceEng
+print C35.capacitanceEng
+print C36.capacitanceEng
+print C37.capacitanceEng
 
-# Parallel resistor association
+# Parallel capacitor association
 print "\n\n"
-print resistor.parallel(R1, R2)
-print resistor.parallel(R1, 30, 40, R2, 1)
-print resistor.parallel(R1, R1, R2, R2, 10**9)
-print resistor.parallel(1, 2)
-print resistor.parallel(1, 1, 1, 1, 1)
-print resistor.parallel(20000, 2, 2000, 20)
-R38 = resistor(2, "R38", 7)
-print resistor.parallel(1000000, 2)
-print resistor.parallel(1000000, R38)
-print resistor.parallel(1, 2)
-print resistor.parallel(1, 2, 3)
-print resistor.parallel(1, 2, 3, 4)
+print capacitor.parallel(C1, C2)
+print capacitor.parallel(C1, 30, 40, C2, 1)
+print capacitor.parallel(C1, C1, C2, C2, 10**9)
+print capacitor.parallel(1, 2)
+print capacitor.parallel(1, 1, 1, 1, 1)
+print capacitor.parallel(20000, 2, 2000, 20)
+C38 = capacitor(2, "C38", 7)
+print capacitor.parallel(1000000, 2)
+print capacitor.parallel(1000000, C38)
+print capacitor.parallel(1, 2)
+print capacitor.parallel(1, 2, 3)
+print capacitor.parallel(1, 2, 3, 4)
 
-# Series resistor association
+# Series capacitor association
 print "\n\n"
-print resistor.series(R1, R2)
-print resistor.series(R1, 30, 40, R2, 1)
-print resistor.series(R1, R1, R2, R2, 10**9)
-print resistor.series(1, 2)
-print resistor.series(1, 1, 1, 1, 1)
-print resistor.series(20000, 2, 2000, 20)
-R38 = resistor(2, "R38", 7)
-print resistor.series(1000000, 2)
-print resistor.series(1000000, R38)
-print resistor.series(1, 2)
-print resistor.series(1, 2, 3)
-print resistor.series(1, 2, 3, 4)
-print resistor.series(1, 0.1, 0.01, 0.001)
-R39 = resistor(0.001, "$R_39$", 4)
-print resistor.series(1, 0.1, 0.01, R39)
-print resistor.series(1, 0.1, 0.01, 0.0001)
-R40 = resistor(0.0001, "$R_40$", 5)
-print resistor.series(1, 0.1, 0.01, R40)
-print resistor.series(1, 10, 100)
-print resistor.series(1, 10, 100, 1000)
-print resistor.series(10, 100, 1000)
-print resistor.series(100, 1000, 10000)
-print resistor.series(100, 1000, 100000)
-R40 = resistor(0.00121434, "$R_40$", 5)
-R41 = resistor(0.00121434, "$R_41$", 2)
-print R40.resistanceEng
-print R41.resistanceEng
+print capacitor.series(C1, C2)
+print capacitor.series(C1, 30, 40, C2, 1)
+print capacitor.series(C1, C1, C2, C2, 10**9)
+print capacitor.series(1, 2)
+print capacitor.series(1, 1, 1, 1, 1)
+print capacitor.series(20000, 2, 2000, 20)
+C38 = capacitor(2, "C38", 7)
+print capacitor.series(1000000, 2)
+print capacitor.series(1000000, C38)
+print capacitor.series(1, 2)
+print capacitor.series(1, 2, 3)
+print capacitor.series(1, 2, 3, 4)
+print capacitor.series(1, 0.1, 0.01, 0.001)
+C39 = capacitor(0.001, "$C_39$", 4)
+print capacitor.series(1, 0.1, 0.01, C39)
+print capacitor.series(1, 0.1, 0.01, 0.0001)
+C40 = capacitor(0.0001, "$C_40$", 5)
+print capacitor.series(1, 0.1, 0.01, C40)
+print capacitor.series(1, 10, 100)
+print capacitor.series(1, 10, 100, 1000)
+print capacitor.series(10, 100, 1000)
+print capacitor.series(100, 1000, 10000)
+print capacitor.series(100, 1000, 100000)
+C40 = capacitor(0.00121434, "$C_40$", 5)
+C41 = capacitor(0.00121434, "$C_41$", 2)
+print C40.capacitanceEng
+print C41.capacitanceEng
 
-# Making series return a resistor
+# Making series return a capacitor
 print('\n')
-R42 = resistor.series(100, 1000, 100000, resistor= True)
-print R42
-print R42.digits
-print R42.label
-print R42.resistance
-print R42.resistanceEng
-R43 = resistor(1213.1212, 'R43', 5)
-R44 = resistor.series(100, 1000, R43, resistor= True)
-print R44
-print R44.digits
-print R44.label
-print R44.resistance
-print R44.resistanceEng
+C42 = capacitor.series(100, 1000, 100000, capacitor=True)
+print C42
+print C42.digits
+print C42.label
+print C42.capacitance
+print C42.capacitanceEng
+C43 = capacitor(1213.1212, 'C43', 5)
+C44 = capacitor.series(100, 1000, C43, capacitor=True)
+print C44
+print C44.digits
+print C44.label
+print C44.capacitance
+print C44.capacitanceEng
 
 # Voltage Divider
 print "\n\n"
-print resistor.voltageDivider(10, 2, 2)
-print resistor.voltageDivider(10, 2, 5)
-print resistor.voltageDivider(10, 10000, 5)
+print capacitor.voltageDivider(10, 2, 2, 100*10**6)
+print capacitor.voltageDivider(10, 2, 5, 100*10**6)
+print capacitor.voltageDivider(10, 10000, 5, 100*10**6)
 
 # Current Divider
 print "\n\n"
-aux = resistor.currentDivider(10, 200, 5)
+aux = capacitor.currentDivider(10, 200, 5, 87*10**3)
 print aux
-print engineerNotation(aux, resistor.unit())
-print resistor.currentDivider(10, 2, 5)
+print engineerNotation(aux, capacitor.unit())
+print capacitor.currentDivider(10, 2, 5, 10)

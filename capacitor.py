@@ -1,5 +1,5 @@
 '''
-    Resitor module for ParamSchemDraw
+    Capacitor module for ParamSchemDraw
 
     A set of classes and methods to ease the drawing and manipulation of capacitors.
 
@@ -33,9 +33,9 @@ class capacitor(electricComponent):
             ARGUMENTS:
                 capacitance -> capacitance value for the given capacitor element
                 label       -> name/identifier of the capacitor (optional)
-                digits      -> number of significant digits to use in enginnering notation
+                digits      -> number of significant digits to use in engineering notation
 
-            OUTPUT: a ideal capacitor object
+            OUTPUT: an ideal capacitor object
 
             CONSTRAINTS:
                 capacitance must be a postive number. Float and Integer are supported
@@ -50,7 +50,7 @@ class capacitor(electricComponent):
         assert isinstance(digits, int), "The digits element must be an integer"
         assert digits >= 1 and digits <= 16, "The digits element must be between [1, 16]"
 
-        if resistor.isValidCapacitor(capacitance):
+        if capacitor.isValidCapacitor(capacitance):
             self._capacitance  = capacitance
             self._label       = label
             self._digits      = digits
@@ -121,7 +121,7 @@ class capacitor(electricComponent):
             return float('inf')
         elif angular:
             return -1.0/(frequency*self._capacitance)
-        else
+        else:
             return -1.0/(2*pi*frequency*self._capacitance)
 
     def reactanceEng(self, frequency, angular=False, latex=True):
@@ -155,7 +155,7 @@ class capacitor(electricComponent):
         value = impedance(self, frequency, angular=angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
-        else
+        else:
             return engineerNotation(value, unit, self._digits)
 
     def susceptance(self, frequency, angular=False):
@@ -165,7 +165,7 @@ class capacitor(electricComponent):
             return 0
         elif angular:
             return frequency*self._capacitance
-        else
+        else:
             return 2*pi*frequency*self._capacitance
 
     def susceptanceEng(self, frequency, angular=False, latex=True):
@@ -182,7 +182,7 @@ class capacitor(electricComponent):
         value = susceptance(self, frequency, angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
-        else
+        else:
             return engineerNotation(value, 'S', self._digits)
 
     def admittance(self, frequency, angular=False):
@@ -204,7 +204,7 @@ class capacitor(electricComponent):
         value = admittance(self, frequency, angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
-        else
+        else:
             return engineerNotation(value, 'S', self._digits)
 
     @property
@@ -213,7 +213,7 @@ class capacitor(electricComponent):
 
     @label.setter
     def label(self, label):
-        assert isinstance(label, str), "The label of the resistor must be a string"
+        assert isinstance(label, str), "The label of the capacitor must be a string"
         self._label =  label
 
     @property
@@ -242,29 +242,29 @@ class capacitor(electricComponent):
 
     @staticmethod
     def E24():
-        return choice(resistor.__E24)
+        return choice(capacitor.__E24)
 
     @staticmethod
     def E12():
-        return choice(resistor.__E12)
+        return choice(capacitor.__E12)
 
     @classmethod
     def E24_Eng(cls):
         '''
-            Outputs the resistance of a random E24 resistance in enginnering
+            Outputs the capacitance of a random E24 capacitor in enginnering
             notation, appending the ohms unit and using the default number of
             significant digits
         '''
-        return engineerNotation(resistor.E24(), capacitor.__UNIT)
+        return engineerNotation(capacitor.E24(), capacitor.__UNIT)
 
     @classmethod
     def E12_Eng(cls):
         '''
-            Outputs the resistance of a random E12 resistance in enginnering
+            Outputs the capacitance of a random E12 capacitor in enginnering
             notation, appending the ohms unit and using the default number of
             significant digits
         '''
-        return engineerNotation(resistor.E12(), capacitor.__UNIT)
+        return engineerNotation(capacitor.E12(), capacitor.__UNIT)
 
     @staticmethod
     def unit():
@@ -288,7 +288,7 @@ class capacitor(electricComponent):
             The output by default is a float which contains the equivalente
             capacitance value in Farads. Nevertheless, if one of the arguments is a
             dictionary with the (key, value) pair is specified as ('capacitor', True),
-            a resistor object is returned with the label $C_{eq}$ and the minimum
+            a capacitor object is returned with the label $C_{eq}$ and the minimum
             number of significant digits (read SIGNIFICANT DIGITS for more details)
 
             SIGNIFICANT DIGITS:
@@ -299,7 +299,7 @@ class capacitor(electricComponent):
             precision), therefore don't influenciate the significant digits of
             the equivalent capacitance.
             If no capacitor object is passed by argument, the number of significant
-            digits in the equivalent resistor is the default, 3
+            digits in the equivalent capacitance is the default, 3
         '''
         assert len(args) > 1, "A minimum of two capacitors is required for a series association"
         flag = isinstance(args[0], capacitor)
@@ -309,7 +309,7 @@ class capacitor(electricComponent):
         else:
             ceq = float(args[0])
         for arg in args[1::]:
-            if isinstance(arg, resistor):
+            if isinstance(arg, capacitor):
                 ceq = ceq * arg._capacitance /(ceq + arg._capacitance)
                 if not flag:
                     digits = arg.digits
@@ -403,15 +403,15 @@ class capacitor(electricComponent):
 
         if  isinstance(C1, capacitor):
             ZC1 = ZC1.impedance(frequency, angular)
-        elif resistor.isValidCapacitor(C1):
-            C1 = complex(0, -1.0/(2*pi*frequency*C1))
+        elif capacitor.isValidCapacitor(C1):
+            ZC1 = complex(0, -1.0/(2*pi*frequency*C1))
         else:
             raise InvalidCapacitor
 
         if  isinstance(C2, capacitor):
             ZC2 = C2.impedance(frequency, angular)
-        elif resistor.isValidCapacitor(C2):
-            C2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
+        elif capacitor.isValidCapacitor(C2):
+            ZC2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
         else:
             raise InvalidCapacitor
 
@@ -451,15 +451,15 @@ class capacitor(electricComponent):
 
         if  isinstance(C1, capacitor):
             ZC1 = ZC1.impedance(frequency, angular)
-        elif resistor.isValidCapacitor(C1):
-            C1 = complex(0, -1.0/(2*pi*frequency*C1))
+        elif capacitor.isValidCapacitor(C1):
+            ZC1 = complex(0, -1.0/(2*pi*frequency*C1))
         else:
             raise InvalidCapacitor
 
         if  isinstance(C2, capacitor):
             ZC2 = C2.impedance(frequency, angular)
-        elif resistor.isValidCapacitor(C2):
-            C2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
+        elif capacitor.isValidCapacitor(C2):
+            ZC2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
         else:
             raise InvalidCapacitor
 

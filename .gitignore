@@ -97,3 +97,4 @@ IMAGENS
 .OUTPUT
 *.png
 generate_DC_circuits.py
+generate_AC_circuits.py
