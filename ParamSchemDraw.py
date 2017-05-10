@@ -12,41 +12,98 @@
     version: 0.1.2
 '''
 
-from math import floor, log10
+from math import floor, log10, log
 from random import randint
+from cmath import *
 
-def engineerNotation(value, units="", p=3, latex=True):
+def engineerNotation(value, units="", p=3, latex=False, isComplex=False):
     '''
-        Formats a number to engineering notation using p significant digits,
-        appending the given unit after the magnitude prefix
+        Formats a complex number to engineering notation using p significant
+        digits, appending the given unit after the magnitude prefix for the real
+        and imaginary part
 
-        USAGE: engineerNotation(value, units, p)
+        USAGE: engineerNotation(value, units, p, kwargs)
+               engineerNotation(value, units, p)
+               engineerNotation(value, units, kwargs)
                engineerNotation(value, units)
+               engineerNotation(value, kwargs)
                engineerNotation(value)
 
         ARGUMENTS:
-            value -> value to be formatted to enginnering notation
-            units -> units of the measure
-            p     -> number of significant digits to use in enginnering notation
+            value   -> value to be formatted to enginnering notation
+            units   -> units of the measure
+            p       -> number of significant digits to use in enginnering notation
+            latex   -> indicates if the string is to be embedded in a latex
+                       equation (between two $)
+            complex -> indicates if the output is forced to have a real and
+                       imaginary part
 
         OUTPUT: a string with the value in enginnering notation with p significant
                 digits with physical units
 
         CONSTRAINTS:
-            value must be a Float and Integer number
+            value must be a Float, Integer or complex number
             units must be a string
             digits must be a integer in the interval [1, 16]
+            latex and isComplex must be boolean
 
             other types/values outside the specified will result in
             AssertionError/Exceptions
     '''
+
+    assert isinstance(value, (int, float, complex))
+    assert isinstance(units, str)
+    assert isinstance(p, int)
+    assert p >= 1 and p <= 16
+    assert isinstance(latex, bool)
+    assert isinstance(isComplex, bool)
+
+
+    '''
+        If the number is supposed to be complex but the argument indicates
+        otherwise, bypasses user intentions (might be some user error that is
+        generating complex numbers, etc)
+    '''
+    if isComplex == False and value.imag != 0:
+        isComplex = True
+    print "Eng notation debug start"
+    print isComplex
+    # Format the real part and if required, the imaginary part using __engineerFormat
+
+    print value
+    print isinstance(value, complex)
+    print "Eng Notation debug end"
+    real = __engineerFormat(value.real, units, p, latex, isComplex)
+    if isComplex == True:
+        imag = __engineerFormat(value.imag, units, p, latex, isComplex)
+        return "{} {}".format(real, imag)
+    else:
+        return real
+
+def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
+    '''
+        Formats a real number to engineering notation using p significant
+        digits, appending the given unit after the magnitude prefix for the real
+        and imaginary part.
+
+
+        ********************************NOTE************************************
+            This methode is intended to be private, as it is called by
+            engineerNotation. If you are looking for a way to format numbers to
+            enginnering notation, please use the engineerNotation methode above
+        ************************************************************************
+
+    '''
+
     assert isinstance(value, (int, float))
     assert isinstance(units, str)
     assert isinstance(p, int)
     assert p >= 1 and p <= 16
+    assert isinstance(latex, bool)
+    assert isinstance(isComplex, bool)
 
     # Engineering units prefixes and offset to unitary prefix
-    if latex:
+    if latex == True:
         _PREFIX = ('p', 'n', '$\mu$', 'm', "", 'K', 'M', 'G')
     else:
         _PREFIX = ('p', 'n', '\mu{}', 'm', "", 'K', 'M', 'G')
@@ -62,6 +119,11 @@ def engineerNotation(value, units="", p=3, latex=True):
         return '0'
 
     # Exponent and mantissa
+    print "Eng debug start"
+    print value
+    print isinstance(value, complex)
+    print isinstance(value, (int, float))
+    print "Eng debug end"
     exp = floor(log10(value))
     mant = value / 10 ** exp
 
@@ -104,9 +166,19 @@ def engineerNotation(value, units="", p=3, latex=True):
         # Smaller than lowest unit or higher than higher unit
         raise ValueOutsideReasonableBounds
 
-    return "{}{}{}{}".format(sign, mantEngStr, _PREFIX[engPrefix], units)
+    if isComplex == True:
+        complexID = 'j'
+    else:
+        complexID = ''
+
+    return "{}{}{}{}{}".format(sign, complexID, mantEngStr, _PREFIX[engPrefix], units)
+
+
 
 class electricComponent(object):
+    '''
+        Generic Mother Class for eletrical components
+    '''
 
     @staticmethod
     def elecRandom(begin, end, step=1, expArg=""):
@@ -165,9 +237,12 @@ class electricComponent(object):
 
         return (randint(0, int((end - begin) / step)) * step + begin) * exponent
 
+
+
 '''
     Exceptions that could be thrown by the classes
 '''
+
 
 
 class ValueOutsideReasonableBounds(ValueError):

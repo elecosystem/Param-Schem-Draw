@@ -255,7 +255,12 @@ class capacitor(electricComponent):
             notation, appending the ohms unit and using the default number of
             significant digits
         '''
-        return engineerNotation(capacitor.E24(), capacitor.__UNIT)
+        c = capacitor.E24()
+        print "Capacitor debug start"
+        print c
+        print isinstance(c, complex)
+        print "Capacitor debug end"
+        return engineerNotation(c, capacitor.__UNIT)
 
     @classmethod
     def E12_Eng(cls):

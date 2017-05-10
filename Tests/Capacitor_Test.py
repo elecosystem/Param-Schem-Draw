@@ -76,7 +76,7 @@ for k in range(1, 10):
 print "\n\n"
 
 
-# Cesistor testing examples
+# Capacitor testing examples
 C0  = capacitor(1)
 C1  = capacitor(10)
 C2  = capacitor(100)
