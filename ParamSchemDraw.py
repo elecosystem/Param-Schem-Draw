@@ -1,4 +1,13 @@
 '''
+      _____        _____            __  __    _____  _____ _    _ ______ __  __   _____  _____       __          __
+     |  __ \ /\   |  __ \     /\   |  \/  |  / ____|/ ____| |  | |  ____|  \/  | |  __ \|  __ \     /\ \        / /
+     | |__) /  \  | |__) |   /  \  | \  / | | (___ | |    | |__| | |__  | \  / | | |  | | |__) |   /  \ \  /\  / /
+     |  ___/ /\ \ |  _  /   / /\ \ | |\/| |  \___ \| |    |  __  |  __| | |\/| | | |  | |  _  /   / /\ \ \/  \/ /
+     | |  / ____ \| | \ \  / ____ \| |  | |  ____) | |____| |  | | |____| |  | | | |__| | | \ \  / ____ \  /\  /
+     |_| /_/    \_\_|  \_\/_/    \_\_|  |_| |_____/ \_____|_|  |_|______|_|  |_| |_____/|_|  \_\/_/    \_\/  \/
+
+
+
     ParamSchemDraw : Parametrized Schematic Draw
 
     A set of classes and methods to ease the of use of SchewDraw for paramerized
@@ -9,34 +18,37 @@
     supports unit appending and number of significant digits
 
     Author: Pedro Martins
-    version: 0.1.2
+    version: 0.1.3
+
 '''
 
-from math import floor, log10, log
+from math import floor, log10
 from random import randint
-from cmath import *
 
-def engineerNotation(value, units="", p=3, latex=False, isComplex=False):
+def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceReal=False):
     '''
         Formats a complex number to engineering notation using p significant
         digits, appending the given unit after the magnitude prefix for the real
         and imaginary part
 
-        USAGE: engineerNotation(value, units, p, kwargs)
+        USAGE: engineerNotation(value, units, p, latex, isComplex, forceReal)
+               engineerNotation(value, units, p, latex, isComplex)
+               engineerNotation(value, units, p, latex)
                engineerNotation(value, units, p)
-               engineerNotation(value, units, kwargs)
                engineerNotation(value, units)
-               engineerNotation(value, kwargs)
                engineerNotation(value)
 
+
+
         ARGUMENTS:
-            value   -> value to be formatted to enginnering notation
-            units   -> units of the measure
-            p       -> number of significant digits to use in enginnering notation
-            latex   -> indicates if the string is to be embedded in a latex
-                       equation (between two $)
-            complex -> indicates if the output is forced to have a real and
-                       imaginary part
+            value     -> value to be formatted to enginnering notation
+            units     -> units of the measure
+            p         -> number of significant digits to use in enginnering notation
+            latex     -> indicates if the string is to be embedded in a latex
+                         equation (between two $)
+            isComplex -> indicates if the output is forced to have a real and
+                         imaginary part
+            forceReal -> forces the output to have the real part even if its zero
 
         OUTPUT: a string with the value in enginnering notation with p significant
                 digits with physical units
@@ -45,7 +57,7 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False):
             value must be a Float, Integer or complex number
             units must be a string
             digits must be a integer in the interval [1, 16]
-            latex and isComplex must be boolean
+            latex, isComplex and forceReal must be boolean
 
             other types/values outside the specified will result in
             AssertionError/Exceptions
@@ -57,7 +69,7 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False):
     assert p >= 1 and p <= 16
     assert isinstance(latex, bool)
     assert isinstance(isComplex, bool)
-
+    assert isinstance(forceReal, bool)
 
     '''
         If the number is supposed to be complex but the argument indicates
@@ -66,17 +78,17 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False):
     '''
     if isComplex == False and value.imag != 0:
         isComplex = True
-    print "Eng notation debug start"
-    print isComplex
-    # Format the real part and if required, the imaginary part using __engineerFormat
 
-    print value
-    print isinstance(value, complex)
-    print "Eng Notation debug end"
+    # Format the real part and if required, the imaginary part using __engineerFormat
     real = __engineerFormat(value.real, units, p, latex, isComplex)
     if isComplex == True:
         imag = __engineerFormat(value.imag, units, p, latex, isComplex)
-        return "{} {}".format(real, imag)
+
+        # if only exists the imaginary part
+        if real == '0' and not forceReal:
+            return imag
+        else:
+            return "{} {}".format(real, imag)
     else:
         return real
 
@@ -119,11 +131,6 @@ def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
         return '0'
 
     # Exponent and mantissa
-    print "Eng debug start"
-    print value
-    print isinstance(value, complex)
-    print isinstance(value, (int, float))
-    print "Eng debug end"
     exp = floor(log10(value))
     mant = value / 10 ** exp
 
@@ -154,15 +161,11 @@ def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
                 char2rm = char2rm + 1
             break;
 
-
-    # for debug
-    # print "{}{}{}{}{}{}{}{}".format('Input Value: ',str(value), " | Mantissa :", str(mant), " | Mantissa Rounded: ", mantEngStr, ' ! Char:', str(char2rm))
-
     # Formated mantissa
     mantEngStr = mantEngStr[0:len(mantEngStr) - char2rm]
 
     engPrefix = engExp + _UNIT_OFFSET
-    if (engPrefix < 0) or (engExp > len(_PREFIX)-1):
+    if (engPrefix < 0) or (engPrefix > len(_PREFIX)-1):
         # Smaller than lowest unit or higher than higher unit
         raise ValueOutsideReasonableBounds
 
@@ -177,7 +180,7 @@ def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
 
 class electricComponent(object):
     '''
-        Generic Mother Class for eletrical components
+        Generic Super Class for eletrical components
     '''
 
     @staticmethod

@@ -1,10 +1,19 @@
 '''
+       _____            _____          _____  _____  _______  ____   _____
+      / ____|    /\    |  __ \  /\    / ____||_   _||__   __|/ __ \ |  __ \
+     | |        /  \   | |__) |/  \  | |       | |     | |  | |  | || |__) |
+     | |       / /\ \  |  ___// /\ \ | |       | |     | |  | |  | ||  _  /
+     | |____  / ____ \ | |   / ____ \| |____  _| |_    | |  | |__| || | \ \
+      \_____|/_/    \_\|_|  /_/    \_\\_____||_____|   |_|   \____/ |_|  \_\
+
+
+
     Capacitor module for ParamSchemDraw
 
     A set of classes and methods to ease the drawing and manipulation of capacitors.
 
     Author: Pedro Martins
-    version: 0.1.2
+    version: 0.1.3
 '''
 
 from math import floor, log10, pi
@@ -55,7 +64,7 @@ class capacitor(electricComponent):
             self._label       = label
             self._digits      = digits
         else:
-            raise InvalidResistor
+            raise InvalidCapacitor
 
     __UNIT = '$F$'
     __IMPEDANCE_UNIT = '$\Omega$'
@@ -136,10 +145,10 @@ class capacitor(electricComponent):
         '''
         unit = capacitor.__IMPEDANCE_UNIT if latex else '\Omega'
 
-        return engineerNotation(reactance(self, frequency, angular=angular), unit, self._digits)
+        return engineerNotation(self.reactance(frequency, angular=angular), unit, self._digits)
 
     def impedance(self, frequency, angular=False):
-        return complex(0, reactance(self, frequency, angular))
+        return complex(0, self.reactance(frequency, angular))
 
     def impedanceEng(self, frequency, angular=False, latex=True):
         '''
@@ -152,7 +161,7 @@ class capacitor(electricComponent):
             for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
         unit = capacitor.__IMPEDANCE_UNIT if latex else '\Omega'
-        value = impedance(self, frequency, angular=angular)
+        value = self.impedance(frequency, angular=angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
         else:
@@ -179,7 +188,7 @@ class capacitor(electricComponent):
             for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
 
-        value = susceptance(self, frequency, angular)
+        value = self.susceptance(frequency, angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
         else:
@@ -188,7 +197,7 @@ class capacitor(electricComponent):
     def admittance(self, frequency, angular=False):
         assert frequency > 0, "The frequency must be a positive value"
 
-        return complex(0, susceptance(self, frequency, angular))
+        return complex(0, self.susceptance(frequency, angular))
 
     def admittanceEng(self, frequency, angular=False, latex=True):
         '''
@@ -201,7 +210,7 @@ class capacitor(electricComponent):
             for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
 
-        value = admittance(self, frequency, angular)
+        value = self.admittance(frequency, angular)
         if value == complex(0, float('inf')):
             return '$\inf$' if latex else '\inf'
         else:
@@ -234,7 +243,6 @@ class capacitor(electricComponent):
             Check if C is a valid value for capacitance.
             It must be a positive integer or float
         '''
-        return True
         if isinstance(C, (int, float)):
             if C > 0:
                 return True
@@ -255,12 +263,12 @@ class capacitor(electricComponent):
             notation, appending the ohms unit and using the default number of
             significant digits
         '''
-        c = capacitor.E24()
-        print "Capacitor debug start"
-        print c
-        print isinstance(c, complex)
-        print "Capacitor debug end"
-        return engineerNotation(c, capacitor.__UNIT)
+        #c = capacitor.E24()
+        #print "Capacitor debug start"
+        #print c
+        ##print isinstance(c, complex)
+        #print "Capacitor debug end"
+        return engineerNotation(capacitor.E24(), capacitor.__UNIT)
 
     @classmethod
     def E12_Eng(cls):
@@ -416,7 +424,7 @@ class capacitor(electricComponent):
         if  isinstance(C2, capacitor):
             ZC2 = C2.impedance(frequency, angular)
         elif capacitor.isValidCapacitor(C2):
-            ZC2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
+            ZC2 = complex(0, -1.0/(2*pi*frequency*C2))
         else:
             raise InvalidCapacitor
 
@@ -477,6 +485,7 @@ class capacitor(electricComponent):
             if kwargs['iSource'] == True:
                 return iSource((ZC1 + ZC2) / ZC2 * float(I), label, 3)
         return (ZC1 + ZC2) / ZC2 * float(I)
+
 
 class InvalidCapacitor(ValueError, TypeError):
     """
