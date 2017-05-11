@@ -159,7 +159,6 @@ class resistor(electricComponent):
             Check if R is a valid value for resistance.
             It must be a positive integer or float
         '''
-        return True
         if isinstance(R, (int, float)):
             if R > 0:
                 return True

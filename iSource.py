@@ -99,7 +99,6 @@ class iSource(electricComponent):
             Check if I is a valid value for current.
             It must be a non zero integer or float
         '''
-        return True
         if isinstance(I, (int, float, complex)):
             if I != 0:
                 return True
