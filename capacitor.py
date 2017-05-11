@@ -68,7 +68,7 @@ class capacitor(electricComponent):
 
     __UNIT = '$F$'
     __IMPEDANCE_UNIT = '$\Omega$'
-    __ADMITTANCE_UNIT = '$\Omega$'
+    __ADMITTANCE_UNIT = '$S$'
 
     # E24 class capacitor values
     __E24 = ( 1.0 * 10 ** -12 , 10 * 10 ** -12 , 100 * 10 ** -12 , 1.0 * 10 ** -9 , 10 * 10 ** -9 , 100 * 10 ** -9 , 1.0 * 10 ** -6 , 10 * 10 ** -6 , 100 * 10 ** -6,
@@ -263,11 +263,6 @@ class capacitor(electricComponent):
             notation, appending the ohms unit and using the default number of
             significant digits
         '''
-        #c = capacitor.E24()
-        #print "Capacitor debug start"
-        #print c
-        ##print isinstance(c, complex)
-        #print "Capacitor debug end"
         return engineerNotation(capacitor.E24(), capacitor.__UNIT)
 
     @classmethod
