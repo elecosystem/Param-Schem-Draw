@@ -274,6 +274,68 @@ class capacitor(electricComponent):
         '''
         return engineerNotation(capacitor.E12(), capacitor.__UNIT)
 
+    @classmethod
+    def chargeEq(cls, **kwargs):
+        '''
+            Computes the relation between electric charge, capacitance and voltage
+            at the terminals of a capacitor
+
+            The keys must be strings and the values must be integers or floats
+            Everything else will return an Assertion error
+
+            The keys must be two of the following: 'charge', 'capacitance' and
+            'voltage' and must be strings.
+            Everything else will return a KeyError exception
+
+        '''
+
+        assert kwargs
+        assert len(kwargs) == 2
+        for value in kwargs.values(): assert isinstance(value, (int, float))
+        for key in kwargs.keys(): assert isinstance(key, (str))
+
+        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
+            value = float(kwargs['capacitance']) / kwargs['charge']
+        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
+            value = float(kwargs['charge']) * kwargs['voltage']
+        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
+            value = float(kwargs['capacitance']) / kwargs['voltage']
+
+        return value
+
+    @classmethod
+    def chargeEqEng(cls, **kwargs):
+        '''
+            Computes the relation between electric charge, capacitance and voltage
+            at the terminals of a capacitor and returns the value formatted in
+            enginnering Notation using the correspondent unit
+
+            The keys must be strings and the values must be integers or floats
+            Everything else will return an Assertion error
+
+            The keys must be two of the following: 'charge', 'capacitance' and
+            'voltage' and must be strings.
+            Everything else will return a KeyError exception
+
+        '''
+
+        assert kwargs
+        assert len(kwargs) == 2
+        for value in kwargs.values(): assert isinstance(value, (int, float))
+        for key in kwargs.keys(): assert isinstance(key, (str))
+
+        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
+            value = float(kwargs['capacitance']) / kwargs['charge']
+            unit = 'V'
+        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
+            value = float(kwargs['charge']) * kwargs['voltage']
+            unit = capacitor.__UNIT
+        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
+            value = float(kwargs['capacitance']) / kwargs['voltage']
+            unit = 'C'
+
+        return engineerNotation(value, unit)
+
     @staticmethod
     def unit():
         return capacitor.__UNIT
@@ -441,7 +503,7 @@ class capacitor(electricComponent):
             shown below
                                 ---I----+--------+--o
                                         |        |
-                                        R1      R2
+                                        C1      C2
                                         |        |
                                         +--GND---+--o
 
@@ -484,7 +546,13 @@ class capacitor(electricComponent):
 
 class InvalidCapacitor(ValueError, TypeError):
     """
-        Capacitance must a positive values
+        Capacitance must be a positive values
         Float or integer are acceptable
     """
+    pass
+
+class InvalidKey(KeyError):
+    '''
+
+    '''
     pass

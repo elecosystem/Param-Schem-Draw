@@ -58,6 +58,35 @@ try:
 except AssertionError:
     print "9. Assertion caught for AssertionError. digits can't be a number"
 
+
+'''
+    Charge Equation tests
+
+'''
+print "\n\n Charge Equation"
+print capacitor.chargeEq(capacitance=1e-6, charge=2)
+print capacitor.chargeEq(capacitance=1e-6, voltage=2)
+print capacitor.chargeEq(voltage=1.121, charge=3.5622)
+print capacitor.chargeEq(capacitance=1e-6, charge=3)
+
+print capacitor.chargeEqEng(capacitance=1e-6, charge=2)
+print capacitor.chargeEqEng(capacitance=1e-6, voltage=2)
+print capacitor.chargeEqEng(voltage=1.121, charge=3.5622)
+print capacitor.chargeEqEng(capacitance=1e-6, charge=3)
+
+try:
+    print capacitor.chargeEq(capacitance=1e-6, charge='r')
+except AssertionError:
+    print "Assertion caught for charge value that is not a float or integer"
+try:
+    print capacitor.chargeEq(capacitance=1e-6)
+except AssertionError:
+    print "Assertion caught for invalid number of arguments"
+try:
+    print capacitor.chargeEq()
+except AssertionError:
+    print "Assertion caught for invalid number of arguments"
+
 # E24 series
 print "\n\n"
 print "E24 Capacitor"
