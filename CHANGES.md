@@ -1,5 +1,14 @@
 # Change Log
 
+## v0.1.3-alpha, 12/05/2017
+
+Modules supported and tested:
+ * Capacitors
+ * Inductors
+
+Modules supported (not tested)
+ * Two port network (Impedance Parameters only)
+ 
 ## v0.1.2, 11/02/2017
 * Random number generator integrated
 
