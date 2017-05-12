@@ -309,6 +309,7 @@ class inductor(electricComponent):
             If no inductor object is passed by argument, the number of significant
             digits in the equivalent inductance is the default, 3
         '''
+
         assert len(args) > 1, "A minimum of two inductors is required for a parallel association"
         flag = isinstance(args[0], inductor)
         if flag:
@@ -387,11 +388,11 @@ class inductor(electricComponent):
             return Leq
 
     @staticmethod
-    def voltageDivider(V, C1, C2, frequency, angular=False, label="$V_{eq}$", **kwargs):
+    def voltageDivider(V, L1, L2, frequency, angular=False, label="$V_{eq}$", **kwargs):
         '''
             Computes the voltage drop across the impedance of the inductor L2
             in a voltage divider formed by the series association of the inductors
-            C1 and C2, such as shown below
+            L1 and L2, such as shown below
                                     ---V----L1---+--o
                                                  |
                                                  L2
@@ -410,43 +411,43 @@ class inductor(electricComponent):
             raise InvalidIndependentSource
 
         if  isinstance(L1, inductor):
-            ZC1 = ZC1.impedance(frequency, angular)
+            ZL1 = ZL1.impedance(frequency, angular)
         elif inductor.isValidInductor(L1):
-            ZC1 = complex(0, -1.0/(2*pi*frequency*L1))
+            ZL1 = complex(0, (2*pi*frequency*L1))
         else:
             raise InvalidInductor
 
-        if  isinstance(C2, inductor):
-            ZC2 = C2.impedance(frequency, angular)
-        elif inductor.isValidInductor(C2):
-            ZC2 = complex(0, -1.0/(2*pi*frequency*C2))
+        if  isinstance(L2, inductor):
+            ZL2 = L2.impedance(frequency, angular)
+        elif inductor.isValidInductor(L2):
+            ZL2 = complex(0, (2*pi*frequency*L2))
         else:
             raise InvalidInductor
 
-        if  isinstance(V, vSource) or isinstance((C1, C2),  inductor):
+        if  isinstance(V, vSource) or isinstance((L1, L2),  inductor):
             digits = min(V._digits, R1._digits, R2._digits)
         else:
             digits = 3
 
         if kwargs:
             if kwargs['vSource'] == True:
-                return vSource(ZC2 / (ZC1 + ZC2) * float(V), label, digits)
-        return ZC2 / (ZC1 + ZC2) * float(V)
+                return vSource(ZL2 / (ZL1 + ZL2) * float(V), label, digits)
+        return ZL2 / (ZL1 + ZL2) * float(V)
 
     @staticmethod
-    def currentDivider(I, C1, C2, frequency, angular=False, label="$I_{eq}$", **kwargs):
+    def currentDivider(I, L1, L2, frequency, angular=False, label="$I_{eq}$", **kwargs):
         '''
-            Computes the current that flows trough C2 in a current divider
-            formed by the parallel association of the inductors C1 and C2, such as
+            Computes the current that flows trough L2 in a current divider
+            formed by the parallel association of the inductors L1 and L2, such as
             shown below
                                 ---I----+--------+--o
                                         |        |
-                                        R1      R2
+                                        L1      L2
                                         |        |
                                         +--GND---+--o
 
             "I" can either be a iSource object or a valid current value
-            C1 and C2 can either be a inductor object or a valid inductance value
+            L1 and L2 can either be a inductor object or a valid inductance value
         '''
         assert frequency >= 0, 'The frequency must be a positive value'
 
@@ -457,34 +458,34 @@ class inductor(electricComponent):
         else:
             raise InvalidIndependentSource
 
-        if  isinstance(C1, inductor):
-            ZC1 = ZC1.impedance(frequency, angular)
-        elif inductor.isValidInductor(C1):
-            ZC1 = complex(0, -1.0/(2*pi*frequency*C1))
+        if  isinstance(L1, inductor):
+            ZL1 = ZL1.impedance(frequency, angular)
+        elif inductor.isValidInductor(L1):
+            ZL1 = complex(0, -1.0/(2*pi*frequency*L1))
         else:
             raise InvalidInductor
 
-        if  isinstance(C2, inductor):
-            ZC2 = C2.impedance(frequency, angular)
-        elif inductor.isValidInductor(C2):
-            ZC2 = 1.0/complex(0, -1.0/(2*pi*frequency*C2))
+        if  isinstance(L2, inductor):
+            ZL2 = L2.impedance(frequency, angular)
+        elif inductor.isValidInductor(L2):
+            ZL2 = 1.0/complex(0, -1.0/(2*pi*frequency*L2))
         else:
             raise InvalidInductor
 
-        if  isinstance(I, iSource) or isinstance((C1, C2),  inductor):
-            digits = min(I._digits, C1._digits, C2._digits)
+        if  isinstance(I, iSource) or isinstance((L1, L2),  inductor):
+            digits = min(I._digits, L1._digits, L2._digits)
         else:
             digits = 3
 
         if kwargs:
             if kwargs['iSource'] == True:
-                return iSource((ZC1 + ZC2) / ZC2 * float(I), label, 3)
-        return (ZC1 + ZC2) / ZC2 * float(I)
+                return iSource((ZL1 + ZL2) / ZL2 * float(I), label, 3)
+        return (ZL1 + ZL2) / ZL2 * float(I)
 
 
 class InvalidInductor(ValueError, TypeError):
     """
-        Inductance must a positive values
+        Inductance must be a positive values
         Float or integer are acceptable
     """
     pass
