@@ -4,7 +4,7 @@
     A set of classes and methods to ease the drawing and manipulation of resitors.
 
     Author: Pedro Martins
-    version: 0.1.2
+    version: 0.1.3
 '''
 
 from math import floor, log10

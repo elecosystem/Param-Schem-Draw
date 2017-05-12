@@ -1,6 +1,24 @@
-# import matplotlib and make it run headless, otherwise in SchewDraw it will return and error
-# when tries to connect to Xserver and $Display environmental variable
-# matplotlib.pyplot enables controlling the number of active plots
+'''
+                _____    _____  _____  _____    _____  _    _  _____  _______  _____
+         /\    / ____|  / ____||_   _||  __ \  / ____|| |  | ||_   _||__   __|/ ____|
+        /  \  | |      | |       | |  | |__) || |     | |  | |  | |     | |  | (___
+       / /\ \ | |      | |       | |  |  _  / | |     | |  | |  | |     | |   \___ \
+      / ____ \| |____  | |____  _| |_ | | \ \ | |____ | |__| | _| |_    | |   ____) |
+     /_/    \_\\_____|  \_____||_____||_|  \_\ \_____| \____/ |_____|   |_|  |_____/
+
+
+    AC circuits for ParamSchemDraw
+
+    A compilation of AC circutis schematics
+
+    Author: Pedro Martins
+    version: 0.1.3
+
+    import matplotlib and make it run headless, otherwise in SchewDraw it will return and error
+    when tries to connect to Xserver and $Display environmental variable
+    matplotlib.pyplot enables controlling the number of active plots
+    
+'''
 import matplotlib
 matplotlib.use('Agg')
 
