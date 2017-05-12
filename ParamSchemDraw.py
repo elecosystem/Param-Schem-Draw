@@ -99,7 +99,7 @@ def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
         and imaginary part.
 
 
-        ********************************NOTE************************************
+        ******************************* NOTE ***********************************
             This methode is intended to be private, as it is called by
             engineerNotation. If you are looking for a way to format numbers to
             enginnering notation, please use the engineerNotation methode above

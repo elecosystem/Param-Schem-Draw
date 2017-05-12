@@ -295,11 +295,11 @@ class capacitor(electricComponent):
         for key in kwargs.keys(): assert isinstance(key, (str))
 
         if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
-            value = float(kwargs['capacitance']) / kwargs['charge']
+            value = float(kwargs['charge']) / kwargs['capacitance']
         elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
-            value = float(kwargs['charge']) * kwargs['voltage']
+            value = float(kwargs['charge']) / kwargs['voltage']
         elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
-            value = float(kwargs['capacitance']) / kwargs['voltage']
+            value = float(kwargs['capacitance']) * kwargs['voltage']
 
         return value
 
@@ -325,13 +325,13 @@ class capacitor(electricComponent):
         for key in kwargs.keys(): assert isinstance(key, (str))
 
         if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
-            value = float(kwargs['capacitance']) / kwargs['charge']
+            value = float(kwargs['charge']) / kwargs['capacitance']
             unit = 'V'
         elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
-            value = float(kwargs['charge']) * kwargs['voltage']
+            value = float(kwargs['charge']) / kwargs['voltage']
             unit = capacitor.__UNIT
         elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
-            value = float(kwargs['capacitance']) / kwargs['voltage']
+            value = float(kwargs['capacitance']) * kwargs['voltage']
             unit = 'C'
 
         return engineerNotation(value, unit)
