@@ -4,7 +4,7 @@
 import matplotlib
 matplotlib.use('Agg')
 
-#Documentation:  https://cdelker.bitbucket.io/SchemDraw.html?
+#Documentation:  https://bitbucket.org/cdelker/schemdraw
 import SchemDraw as schem
 import SchemDraw.elements as e
 
@@ -157,8 +157,8 @@ def DC_002(ekey, label=True, **kwargs):
     d.add( e.LINE, to=V1.schem.start )
     d.add( e.DOT )
     d.add( e.GND )
-    
-    
+
+
     if label:
         V1.schem.add_label(V1.voltageEng, loc='bot')
         V2.schem.add_label(V2.voltageEng, loc='bot')
@@ -246,8 +246,8 @@ def DC_002_VB(ekey, label=True, **kwargs):
     d.add( e.LINE, to=V1.schem.start )
     d.add( e.DOT )
     d.add( e.GND )
-    
-    
+
+
     if label:
         V1.schem.add_label(V1.voltageEng, loc='bot')
         V2.schem.add_label(V2.voltageEng, loc='bot')

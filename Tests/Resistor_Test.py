@@ -7,7 +7,7 @@
 import os, sys
 sys.path.insert(0,os.path.pardir)
 
-from ParamSchemDraw import *
+from resistor import *
 
 # Test assertions for invalid argument values
 try:
@@ -156,9 +156,36 @@ print R35.resistance
 print R36.resistance
 print R37.resistance
 
+# conductance
+print("\n\nConductance")
+print R0.conductance
+print R1.conductance
+print R2.conductance
+print R3.conductance
+print R4.conductance
+print R5.conductance
+print R6.conductance
+print R7.conductance
+print R8.conductance
+print R9.conductance
+
+# Formated Printing - Engeneering Notation and latex symbols
+print("\n\nConductance Eng")
+print R0.conductanceEng
+print R1.conductanceEng
+print R2.conductanceEng
+print R3.conductanceEng
+print R4.conductanceEng
+print R5.conductanceEng
+print R6.conductanceEng
+print R7.conductanceEng
+print R8.conductanceEng
+print R9.conductanceEng
+
+
 # Formated Printing - Engeneering Notation and latex symbols
 print("\n\n")
-print R0.resistanceEng
+print R0.resistanceEng(True)
 print R1.resistanceEng
 print R2.resistanceEng
 print R3.resistanceEng
