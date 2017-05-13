@@ -160,6 +160,7 @@ class capacitor(electricComponent):
             then the unit has no equation latex marker, '$', wrapping the latex command
             for the greek Omega letter. If latex=True, it does and the unit is $\Omega$
         '''
+
         unit = capacitor.__IMPEDANCE_UNIT if latex else '\Omega'
         value = self.impedance(frequency, angular=angular)
         if value == complex(0, float('inf')):
