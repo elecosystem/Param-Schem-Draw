@@ -41,7 +41,7 @@ import SchemDraw as schem
 import SchemDraw.elements as e
 
 # Import library to parametrize the used of SchemDraw
-from ParamSchemDraw import electricComponent, resistor, vSource, iSource
+from ParamSchemDraw import electricComponent, engineerNotation
 
 # Folder to save the schematics in server
 path = '/projects/15860edd-0fa5-4a0a-820c-2bb86b4c0cd5/ENUNCIADOS/IMAGENS/'
@@ -53,8 +53,11 @@ extension = '.png'
 
 
 from numpy import linalg, matrix, array
+import vSource
+import iSource
+import resistor
 
-class quadripole(object)
+class quadripole(object):
     '''
         Class used to define a generic quadripoles
         It provides static methods to compute xxxx. It also offers a
@@ -413,6 +416,41 @@ class zQuadripole(quadripole):
         '''
         T = toT(self).t
         return sQuadripole.sInit(self, T.I)
+
+    def outputTh(self, Vth, Rth, outPort=2):
+        '''
+            Calculate the voltage and current at one port of the quadripole when
+            the other is connected to a Thevenin Equivalent with
+
+
+
+
+        '''
+
+        assert vSource.isValidVSource(Vth)
+        assert resistor.isValidResistor(Rth)
+        assert isinstance(outPort, int)
+        assert outPort == 1 or outPort == 2
+
+        raise NotImplementedError
+
+    def zinLoad(self, RL, inPort=1):
+        '''
+            Input impedance by having a load resistor in the other port
+        '''
+
+        assert resistor.isValidResistor(RL) or isinstance(resistor)
+        assert isinstance(inPort, int)
+        assert inPort == 1 or inPort == 2
+
+        RL_resistance = RL.resistance if isinstance(RL, resistor) else RL
+
+        if inPort == 1:
+            return self._z11 + self._z12*float(self._z_21) / (RL_resistance - self._z22)
+        elif inPort == 2    :
+            return -self._z21 * float(self._z12) / (self._z11 + RL_resistance) + self._z22
+        else:
+            raise RuntimeError('inPort must be a integer with 1 or 2! Assertion verification failed!')
 
 
 '''

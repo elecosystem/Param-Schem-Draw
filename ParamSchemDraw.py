@@ -24,6 +24,7 @@
 
 from math import floor, log10
 from random import randint
+from inspect import isfunction
 
 def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceReal=False):
     '''
@@ -63,7 +64,8 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceRe
             AssertionError/Exceptions
     '''
 
-    assert isinstance(value, (int, float, complex))
+    print "Hello" + str(type(value))
+    #assert isinstance(value, (int, float, complex)) or isfunction(value)
     assert isinstance(units, str)
     assert isinstance(p, int)
     assert p >= 1 and p <= 16
@@ -71,6 +73,8 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceRe
     assert isinstance(isComplex, bool)
     assert isinstance(forceReal, bool)
 
+    if isfunction(value):
+        value = value()
     '''
         If the number is supposed to be complex but the argument indicates
         otherwise, bypasses user intentions (might be some user error that is
