@@ -80,15 +80,17 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceRe
         isComplex = True
 
     # Format the real part and if required, the imaginary part using __engineerFormat
-    real = __engineerFormat(value.real, units, p, latex, isComplex)
+    real = __engineerFormat(value.real, units, p, latex, False)
     if isComplex == True:
-        imag = __engineerFormat(value.imag, units, p, latex, isComplex)
-
+        imag = __engineerFormat(value.imag, units, p, latex, True)
+        
+        # check imaginary part sign (if negative the complex number has the sign)
+        sign = '+' if value.imag > 0 else ''
         # if only exists the imaginary part
-        if real == '0' and not forceReal:
+        if real == 0 and not forceReal:
             return imag
         else:
-            return "{} {}".format(real, imag)
+            return "{} {} {}".format(real, sign, imag)
     else:
         return real
 
@@ -100,9 +102,9 @@ def __engineerFormat(value, units="", p=3, latex=False, isComplex=False):
 
 
         ******************************* NOTE ***********************************
-            This methode is intended to be private, as it is called by
+            This method is intended to be private, as it is called by
             engineerNotation. If you are looking for a way to format numbers to
-            enginnering notation, please use the engineerNotation methode above
+            enginnering notation, please use the engineerNotation method above
         ************************************************************************
 
     '''
