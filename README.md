@@ -31,7 +31,7 @@ Offers:
 
 ***
 
-It started as a standalone project, but now it is inserted in a larger project, called [SIACUA](http://siacua.web.ua.pt/), here a group of teachers and professors at [Aveiro University](https://www.ua.pt/) intend to create an autonomous learning ecosystem with video-classes, exercises and theorical content.
+It started to cover the needs of a Electronic Learning Ecosystem a group of students intend to create at [Aveiro University](https://www.ua.pt/). It ended up being inserted in a larger project, called [SIACUA](http://siacua.web.ua.pt/), here a group of teachers (and now students) at [Aveiro University](https://www.ua.pt/) intend to create an autonomous learning ecosystem with video-classes, exercises and theorical content.
 
 ***
 
