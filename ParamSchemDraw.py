@@ -83,7 +83,7 @@ def engineerNotation(value, units="", p=3, latex=False, isComplex=False, forceRe
     real = __engineerFormat(value.real, units, p, latex, False)
     if isComplex == True:
         imag = __engineerFormat(value.imag, units, p, latex, True)
-        
+
         # check imaginary part sign (if negative the complex number has the sign)
         sign = '+' if value.imag > 0 else ''
         # if only exists the imaginary part
@@ -253,5 +253,11 @@ class electricComponent(object):
 class ValueOutsideReasonableBounds(ValueError):
     '''
         The value is not reasonable for the envised applications
+    '''
+    pass
+
+class LabelAlreadyInUse(ValueError):
+    '''
+        The specified label is already in use in the same circuit
     '''
     pass
