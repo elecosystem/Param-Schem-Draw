@@ -19,6 +19,8 @@
 from math import floor, log10, pi
 from random import randint, choice
 
+import SchemDraw.elements as e
+
 from ParamSchemDraw import engineerNotation
 from iSource import *
 from vSource import *
@@ -66,6 +68,7 @@ class inductor(electricComponent):
         else:
             raise InvalidInductor
 
+    __SCHEMATIC = e.INDUCTOR
     __UNIT = '$H$'
     __IMPEDANCE_UNIT = '$\Omega$'
     __ADMITTANCE_UNIT = '$S$'
@@ -255,6 +258,10 @@ class inductor(electricComponent):
     @staticmethod
     def E12():
         return choice(inductor.__E12)
+
+    @classmethod
+    def schematic(cls):
+        return cls.__SCHEMATIC
 
     @classmethod
     def E24_Eng(cls):

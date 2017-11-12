@@ -11,6 +11,8 @@
 from math import floor, log10
 from random import randint, choice
 
+import SchemDraw.elements as e
+
 from ParamSchemDraw import *
 
 
@@ -53,6 +55,7 @@ class iSource(electricComponent):
         else:
             raise InvalidIndepentSource
 
+    __SCHEMATIC = e.SOURCE_I
     __UNIT = "A"
 
     @property
@@ -103,6 +106,10 @@ class iSource(electricComponent):
             if I != 0:
                 return True
         return False
+
+    @classmethod
+    def schematic(cls):
+        return cls.__SCHEMATIC
 
 class InvalidIndepentSource(ValueError, TypeError):
     '''

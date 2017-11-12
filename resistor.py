@@ -10,6 +10,8 @@
 from math import floor, log10
 from random import randint, choice
 
+import SchemDraw.elements as e
+
 from ParamSchemDraw import engineerNotation
 from iSource import *
 from vSource import *
@@ -59,6 +61,7 @@ class resistor(electricComponent):
 
 
     __UNIT = '$\Omega$'
+    __SCHEMATIC = e.RES
 
     # E24 class resistor values
     __E24 = ( 1.0 , 10 , 100 , 1.0 * 10 ** 3 , 10 * 10 ** 3 , 100 * 10 ** 3 , 1.0 * 10 ** 6,
@@ -164,6 +167,7 @@ class resistor(electricComponent):
                 return True
         return False
 
+
     @staticmethod
     def E24():
         return choice(resistor.__E24)
@@ -171,6 +175,10 @@ class resistor(electricComponent):
     @staticmethod
     def E12():
         return choice(resistor.__E12)
+
+    @classmethod
+    def schematic(cls):
+        return cls.__SCHEMATIC
 
     @classmethod
     def E24_Eng(cls):
