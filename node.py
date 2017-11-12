@@ -2,34 +2,35 @@
 from ParamSchemDraw import *
 
 class node(object):
+    __LABEL = 1             # Node label counter
+    __NODE_ID = 0           # Node ID counter
+    __NODE_LABELS = []      # Array of used labels
 
-    # Node label counter, ID and array of used labels
-    __LABEL = 1
-    __NODE_ID = 0
-    __NODE_LABELS = []
 
     def __init__(self, label="", voltage=None, isgnd=False):
         assert isinstance(label, str), "The label element must be a string"
 
         # Asign node ID
-        self._id = __NODE_ID
-        __NODE_ID += 1
+        self._id = node.__NODE_ID
+        node.__NODE_ID += 1
 
-        # Asign node label. If label isn't specified, assign new label
+        # Asign node label. If label isn't specified, create a new label
         if not label:
-            label = "V" + __LABEL
-            __LABEL += 1
+            label = "V" + node.__LABEL
+            node.__LABEL += 1
 
-            while label in __NODE_LABELS:
-                label = "V" + __LABEL
-                __LABEL += 1
+            while label in node.__NODE_LABELS:
+                label = "V" + node.__LABEL
+                node.__LABEL += 1
             self._label = label
 
-        elif label not in __NODE_LABELS:
+        elif label not in node.__NODE_LABELS:
             self._label = label
         else:
             raise LabelAlreadyInUse
-        __NODE_LABELS.append(label)
+
+        node.__NODE_LABELS.append(label)
+
 
         # Empty mesh array
         self._mesh = []
@@ -37,12 +38,17 @@ class node(object):
         # Voltage in the node
         self._voltage = None
 
-        # Check if the Node is ground
+        # Define Node as ground
         self._isGND = isgnd
+
 
     '''
         GETTERS
     '''
+    @property
+    def id(self):
+        return self._id
+
     @property
     def label(self):
         return self._label
@@ -77,6 +83,13 @@ class node(object):
         assert mesh_id in self._mesh, "The mesh ID must exist in the mesh list associated with the node"
 
         self._mesh.remove(mesh_id)
+
+    @classmethod
+    def isValidNodeID(node_id):
+        if isinstance(node_id, int):
+            if node_id >= 0:
+                return True
+        return False
 
 #    @staticmethod
 #    def getNode(node_id)

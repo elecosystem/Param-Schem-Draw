@@ -8,30 +8,31 @@ class mesh(object):
     __MESH_ID = 0
     __MESH_LABELS = []
 
-    def __init__(self, component, label="", current=None):
+    def __init__(self, component=None, label="", current=None):
         assert isinstance(component, electricComponent), "The component must be a valid component"
         assert isinstance(label, str), "The label element must be a string"
 
 
         # Asign mesh ID
-        self._id = __MESH_ID
-        __MESH_ID += 1
+        self._id = mesh.__MESH_ID
+        mesh.__MESH_ID += 1
 
         # Assign mesh label. If label isn't specified, assign new label
         if not label:
-            label = "I" + __LABEL
-            __LABEL += 1
+            label = "I" + mesh.__LABEL
+            mesh.__LABEL += 1
 
-            while label in __MESH_LABELS:
-                label = "I" + __LABEL
-                __LABEL += 1
+            while label in mesh.__MESH_LABELS:
+                label = "I" + mesh.__LABEL
+                mesh.__LABEL += 1
             self._label = label
 
-        elif label not in __MESH_LABELS:
+        elif label not in mesh.__MESH_LABELS:
             self._label = label
         else:
             raise LabelAlreadyInUse
-        __MESH_LABELS.append(label)
+
+        mesh.__MESH_LABELS.append(label)
 
         # Two element node array
         self._node = [None] * 2
@@ -47,12 +48,32 @@ class mesh(object):
         GETTERS
     '''
     @property
+    def id(self):
+        return self._id
+
+    @property
     def label(self):
         return self._label
 
     @property
     def node(self):
         return self._node
+
+    @property
+    def start_node(self):
+        return self._node[0]
+
+    @property
+    def end_node(self):
+        return self._node[1]
+
+    @property
+    def component(self):
+        return self._component
+
+    @property
+    def mesh_type(self):
+        return self._mesh_type
 
     '''
         SETTERS
@@ -77,7 +98,31 @@ class mesh(object):
         # Edit mesh association to nodes
         self._mesh[mesh_node_id] = node_id
 
-        #if None not in self._node:
+    @start_node.setter
+    def start_node(self, node_id):
+        self.node(0, node_id)
+
+    @end_node.setter
+    def end_node(self, node_id):
+        self.node(1, node_id)
+
+    @component.setter
+    def component(self, component):
+        assert isintance(component, electricComponent), "Componente is not a valid electrical component"
+        self._component = component
+
+    @mesh_type.setter
+    def mesh_type(self, mesh_type):
+        assert isintance(mesh_type, str), "The mesh type must be avalid string"
+        self._mesh_type = mesh_type
+
+
+    @classmethod
+    def isValidMeshID(mesh_id):
+        if isinstance(mesh_id, int):
+            if mesh_id >= 0:
+                return True
+        return False
 
     def remove_node_from_mesh(self, mesh_node_id):
         assert isinstance(mesh_node_id, int), "The mesh ID must be a integer"
