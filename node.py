@@ -16,11 +16,11 @@ class node(object):
 
         # Asign node label. If label isn't specified, create a new label
         if not label:
-            label = "V" + node.__LABEL
+            label = "V" + str(node.__LABEL)
             node.__LABEL += 1
 
             while label in node.__NODE_LABELS:
-                label = "V" + node.__LABEL
+                label = "V" + str(node.__LABEL)
                 node.__LABEL += 1
             self._label = label
 

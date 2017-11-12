@@ -2,11 +2,11 @@ from node import *
 
 __NODES = []
 
-def add_node(label="", voltage=None, isgnd=False):
-    temp_node = node(label, voltage, isgnd)
+def add_node(new_node):
+    temp_node = new_node #node(label, voltage, isgnd)
     __NODES.append(temp_node)
     return temp_node
-    
+
 def get_node(node_id):
     assert isValidNodeID, "The node ID is invalid"
     temp_node = None

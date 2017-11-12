@@ -9,7 +9,7 @@ class mesh(object):
     __MESH_LABELS = []
 
     def __init__(self, component=None, label="", current=None):
-        assert isinstance(component, electricComponent), "The component must be a valid component"
+        #assert isinstance(component, (electricComponent, None)), "The component must be a valid component"
         assert isinstance(label, str), "The label element must be a string"
 
 
@@ -19,11 +19,11 @@ class mesh(object):
 
         # Assign mesh label. If label isn't specified, assign new label
         if not label:
-            label = "I" + mesh.__LABEL
+            label = "I" + str(mesh.__LABEL)
             mesh.__LABEL += 1
 
             while label in mesh.__MESH_LABELS:
-                label = "I" + mesh.__LABEL
+                label = "I" + str(mesh.__LABEL)
                 mesh.__LABEL += 1
             self._label = label
 
@@ -96,24 +96,28 @@ class mesh(object):
         assert mesh_node_id in [0, 1], "The node to set in the mesh must be 0 or 1"
 
         # Edit mesh association to nodes
-        self._mesh[mesh_node_id] = node_id
+        self.__node[mesh_node_id] = node_id
 
     @start_node.setter
     def start_node(self, node_id):
-        self.node(0, node_id)
+        self._node[0] = node_id
+        #self.node(0, node_id)
 
     @end_node.setter
     def end_node(self, node_id):
-        self.node(1, node_id)
+        self._node[1] = node_id
+        #self.node(1, node_id)
 
     @component.setter
     def component(self, component):
-        assert isintance(component, electricComponent), "Componente is not a valid electrical component"
+        print(type(component))
+        print(isinstance(component, electricComponent))
+        #assert isinstance(component, electricComponent), "Componente is not a valid electrical component"
         self._component = component
 
     @mesh_type.setter
     def mesh_type(self, mesh_type):
-        assert isintance(mesh_type, str), "The mesh type must be avalid string"
+        assert isinstance(mesh_type, str), "The mesh type must be avalid string"
         self._mesh_type = mesh_type
 
 

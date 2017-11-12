@@ -2,8 +2,10 @@ from mesh import *
 
 __MESHES = []
 
-def add_mesh(new_mesh):
-    __MESHES.append(new_mesh)
+def add_mesh():
+    temp_mesh = mesh()
+    __MESHES.append(temp_mesh)
+    return temp_mesh
 
 def get_mesh(mesh_id):
     assert isValidMeshID, "The mesh ID is invalid"
