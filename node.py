@@ -22,7 +22,7 @@ class node(object):
 
     _SCHEMATIC = e.DOT
 
-    def __init__(self, label="", voltage=None, isgnd=False):
+    def __init__(self, label="", voltage=None):
         assert isinstance(label, str), "The label element must be a string"
 
         # Assign node ID and increment node counter
@@ -55,9 +55,6 @@ class node(object):
 
         # Voltage in the node
         self._voltage = None
-
-        # Define Node as ground
-        self._isGND = isgnd
 
 
     '''
