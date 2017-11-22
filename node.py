@@ -1,14 +1,14 @@
 '''
                      _
-     _ __   ___   __| | ___   _ __  _   _
-    | '_ \ / _ \ / _` |/ _ \ | '_ \| | | |
-    | | | | (_) | (_| |  __/_| |_) | |_| |
-    |_| |_|\___/ \__,_|\___(_) .__/ \__, |
-                             |_|    |___/
+     _ __   ___   __| | ___
+    | '_ \ / _ \ / _` |/ _ \
+    | | | | (_) | (_| |  __/
+    |_| |_|\___/ \__,_|\___|
 
 
 '''
 from ParamSchemDraw import *
+import SchemDraw.elements as e
 
 class node(object):
     '''
@@ -20,6 +20,7 @@ class node(object):
     __NODE_ID = 0           # Node ID counter
     __NODE_LABELS = []      # Array of used labels
 
+    _SCHEMATIC = e.DOT
 
     def __init__(self, label="", voltage=None, isgnd=False):
         assert isinstance(label, str), "The label element must be a string"
