@@ -1,7 +1,21 @@
+'''
+                     _
+     _ __   ___   __| | ___   _ __  _   _
+    | '_ \ / _ \ / _` |/ _ \ | '_ \| | | |
+    | | | | (_) | (_| |  __/_| |_) | |_| |
+    |_| |_|\___/ \__,_|\___(_) .__/ \__, |
+                             |_|    |___/
 
+
+'''
 from ParamSchemDraw import *
 
 class node(object):
+    '''
+        Class used to define a node in a circuit layout
+    '''
+
+    # Class parameters
     __LABEL = 1             # Node label counter
     __NODE_ID = 0           # Node ID counter
     __NODE_LABELS = []      # Array of used labels
@@ -10,18 +24,20 @@ class node(object):
     def __init__(self, label="", voltage=None, isgnd=False):
         assert isinstance(label, str), "The label element must be a string"
 
-        # Asign node ID
+        # Assign node ID and increment node counter
         self._id = node.__NODE_ID
         node.__NODE_ID += 1
 
-        # Asign node label. If label isn't specified, create a new label
+        # Assign node label. If a label isn't provided, auto-assign a label
         if not label:
             label = "V" + str(node.__LABEL)
             node.__LABEL += 1
 
+            # check if label is already in use
             while label in node.__NODE_LABELS:
                 label = "V" + str(node.__LABEL)
                 node.__LABEL += 1
+
             self._label = label
 
         elif label not in node.__NODE_LABELS:
@@ -29,6 +45,7 @@ class node(object):
         else:
             raise LabelAlreadyInUse
 
+        # save label as in use
         node.__NODE_LABELS.append(label)
 
 
@@ -86,8 +103,12 @@ class node(object):
 
     @classmethod
     def isValidNodeID(node_id):
+        '''
+            An inode ID is valid if is a postive integer already assigned to a node in used
+        '''
+
         if isinstance(node_id, int):
-            if node_id >= 0:
+            if (node_id >= 0) and (node_id < __NODE_ID):
                 return True
         return False
 

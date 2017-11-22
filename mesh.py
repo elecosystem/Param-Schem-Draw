@@ -1,30 +1,43 @@
+'''
+                         _
+     _ __ ___   ___  ___| |__    _ __  _   _
+    | '_ ` _ \ / _ \/ __| '_ \  | '_ \| | | |
+    | | | | | |  __/\__ \ | | |_| |_) | |_| |
+    |_| |_| |_|\___||___/_| |_(_) .__/ \__, |
+                                |_|    |___/
+'''
 
 from ParamSchemDraw import electricComponent
 
 class mesh(object):
+    '''
+        Class used to define a mesh in a circuit layout
+    '''
 
-    # Mesh label and ID
-    __LABEL = 1
-    __MESH_ID = 0
-    __MESH_LABELS = []
+    # Class Parameters
+    __LABEL = 1         # Mesh label counter
+    __MESH_ID = 0       # Mesh ID counter
+    __MESH_LABELS = []  # Array of used labels
 
     def __init__(self, component=None, label="", current=None):
         #assert isinstance(component, (electricComponent, None)), "The component must be a valid component"
         assert isinstance(label, str), "The label element must be a string"
 
 
-        # Asign mesh ID
+        # Asign mesh ID and increment mesh counter
         self._id = mesh.__MESH_ID
         mesh.__MESH_ID += 1
 
-        # Assign mesh label. If label isn't specified, assign new label
+        # Assign mesh label. If label isn't provided, auto-assign a label
         if not label:
             label = "I" + str(mesh.__LABEL)
             mesh.__LABEL += 1
 
+            # check if label is already in use
             while label in mesh.__MESH_LABELS:
                 label = "I" + str(mesh.__LABEL)
                 mesh.__LABEL += 1
+
             self._label = label
 
         elif label not in mesh.__MESH_LABELS:
@@ -32,16 +45,17 @@ class mesh(object):
         else:
             raise LabelAlreadyInUse
 
+        # save label as in use
         mesh.__MESH_LABELS.append(label)
 
-        # Two element node array
+        # A mesh can only have two nodes
         self._node = [None] * 2
 
         # Electrical Component Placeholder
         self._component = component
         self._mesh_type = type(component).__name__
 
-        # Current in the node
+        # Current in the mesh
         self._current = None
 
     '''
@@ -92,8 +106,7 @@ class mesh(object):
     def node(self, mesh_node_id, node_id):
         assert isinstance(node_id, int), "The node ID must be a integer"
         assert node_id >= 0, "The node ID must be positive"
-        assert isinstance(mesh_node_id, int), "The node ID must be a integer"
-        assert mesh_node_id in [0, 1], "The node to set in the mesh must be 0 or 1"
+        assert isValidMeshNodeID(mesh_node_id), "The node set in the mesh must be 0 or 1"
 
         # Edit mesh association to nodes
         self.__node[mesh_node_id] = node_id
@@ -125,6 +138,13 @@ class mesh(object):
     def isValidMeshID(mesh_id):
         if isinstance(mesh_id, int):
             if mesh_id >= 0:
+                return True
+        return False
+
+    @classmethod
+    def isValidMeshNodeID(mesh_node_id):
+        if isinstance(mesh_node_id, int):
+            if mesh_node_id in [0, 1]:
                 return True
         return False
 
