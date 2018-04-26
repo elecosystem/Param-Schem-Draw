@@ -3,6 +3,7 @@ from node_dealer import *
 
 from mesh_dealer import *
 
+
 def add_gnd_node():
     gnd = node("GND", 0, True);
     add_node(gnd)

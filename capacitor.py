@@ -113,6 +113,9 @@ class capacitor(electricComponent):
               6.8 * 10 ** -12 , 68 * 10 ** -12 , 680 * 10 ** -12 , 6.8 * 10 ** -9 , 68 * 10 ** -9 , 680 * 10 ** -9 , 6.8 * 10 ** -6 , 68 * 10 ** -6 , 680 * 10 ** -6,
               8.2 * 10 ** -12 , 82 * 10 ** -12 , 820 * 10 ** -12 , 8.2 * 10 ** -9 , 82 * 10 ** -9 , 820 * 10 ** -9 , 8.2 * 10 ** -6 , 82 * 10 ** -6 , 820 * 10 ** -6 )
 
+    '''
+        GETTERS
+    '''
     @property
     def capacitance(self):
         return self._capacitance
@@ -126,6 +129,33 @@ class capacitor(electricComponent):
         '''
         return engineerNotation(self._capacitance, 'F', self._digits)
 
+    @property
+    def label(self):
+        return self._label
+
+    @property
+    def digits(self):
+        return self._digits
+
+    @property
+    def schem(self):
+        return self._schem
+
+    '''
+        SETTERS
+    '''
+    @label.setter
+    def label(self, label):
+        assert isinstance(label, str), "The label of the capacitor must be a string"
+        self._label =  label
+
+    @schem.setter
+    def schem(self, schematic):
+        self._schem = schematic
+
+    '''
+        OBJECT METHODS
+    '''
     def reactance(self, frequency, angular=False):
         assert frequency >= 0, "The frequency must be a positive value"
 
@@ -219,27 +249,10 @@ class capacitor(electricComponent):
         else:
             return engineerNotation(value, 'S', self._digits)
 
-    @property
-    def label(self):
-        return self._label
 
-    @label.setter
-    def label(self, label):
-        assert isinstance(label, str), "The label of the capacitor must be a string"
-        self._label =  label
-
-    @property
-    def digits(self):
-        return self._digits
-
-    @property
-    def schem(self):
-        return self._schem
-
-    @schem.setter
-    def schem(self, schematic):
-        self._schem = schematic
-
+    '''
+        STATIC METHODS
+    '''
     @staticmethod
     def isValidCapacitor(C):
         '''
@@ -258,90 +271,6 @@ class capacitor(electricComponent):
     @staticmethod
     def E12():
         return choice(capacitor.__E12)
-        
-    @classmethod
-    def schematic(cls):
-        return cls.__SCHEMATIC
-
-    @classmethod
-    def E24_Eng(cls):
-        '''
-            Outputs the capacitance of a random E24 capacitor in enginnering
-            notation, appending the ohms unit and using the default number of
-            significant digits
-        '''
-        return engineerNotation(capacitor.E24(), capacitor.__UNIT)
-
-    @classmethod
-    def E12_Eng(cls):
-        '''
-            Outputs the capacitance of a random E12 capacitor in enginnering
-            notation, appending the ohms unit and using the default number of
-            significant digits
-        '''
-        return engineerNotation(capacitor.E12(), capacitor.__UNIT)
-
-    @classmethod
-    def chargeEq(cls, **kwargs):
-        '''
-            Computes the relation between electric charge, capacitance and voltage
-            at the terminals of a capacitor
-
-            The keys must be strings and the values must be integers or floats
-            Everything else will return an Assertion error
-
-            The keys must be two of the following: 'charge', 'capacitance' and
-            'voltage' and must be strings.
-            Everything else will return a KeyError exception
-
-        '''
-
-        assert kwargs
-        assert len(kwargs) == 2
-        for value in kwargs.values(): assert isinstance(value, (int, float))
-        for key in kwargs.keys(): assert isinstance(key, (str))
-
-        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
-            value = float(kwargs['charge']) / kwargs['capacitance']
-        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
-            value = float(kwargs['charge']) / kwargs['voltage']
-        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
-            value = float(kwargs['capacitance']) * kwargs['voltage']
-
-        return value
-
-    @classmethod
-    def chargeEqEng(cls, **kwargs):
-        '''
-            Computes the relation between electric charge, capacitance and voltage
-            at the terminals of a capacitor and returns the value formatted in
-            enginnering Notation using the correspondent unit
-
-            The keys must be strings and the values must be integers or floats
-            Everything else will return an Assertion error
-
-            The keys must be two of the following: 'charge', 'capacitance' and
-            'voltage' and must be strings.
-            Everything else will return a KeyError exception
-
-        '''
-
-        assert kwargs
-        assert len(kwargs) == 2
-        for value in kwargs.values(): assert isinstance(value, (int, float))
-        for key in kwargs.keys(): assert isinstance(key, (str))
-
-        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
-            value = float(kwargs['charge']) / kwargs['capacitance']
-            unit = 'V'
-        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
-            value = float(kwargs['charge']) / kwargs['voltage']
-            unit = capacitor.__UNIT
-        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
-            value = float(kwargs['capacitance']) * kwargs['voltage']
-            unit = 'C'
-
-        return engineerNotation(value, unit)
 
     @staticmethod
     def unit():
@@ -549,6 +478,92 @@ class capacitor(electricComponent):
             if kwargs['iSource'] == True:
                 return iSource((ZC1 + ZC2) / ZC2 * float(I), label, 3)
         return (ZC1 + ZC2) / ZC2 * float(I)
+
+    '''
+        CLASS METHODS
+    '''
+    @classmethod
+    def schematic(cls):
+        return cls.__SCHEMATIC
+
+    @classmethod
+    def E24_Eng(cls):
+        '''
+            Outputs the capacitance of a random E24 capacitor in enginnering
+            notation, appending the ohms unit and using the default number of
+            significant digits
+        '''
+        return engineerNotation(capacitor.E24(), capacitor.__UNIT)
+
+    @classmethod
+    def E12_Eng(cls):
+        '''
+            Outputs the capacitance of a random E12 capacitor in enginnering
+            notation, appending the ohms unit and using the default number of
+            significant digits
+        '''
+        return engineerNotation(capacitor.E12(), capacitor.__UNIT)
+
+    @classmethod
+    def chargeEq(cls, **kwargs):
+        '''
+            Computes the relation between electric charge, capacitance and voltage
+            at the terminals of a capacitor
+
+            The keys must be strings and the values must be integers or floats
+            Everything else will return an Assertion error
+
+            The keys must be two of the following: 'charge', 'capacitance' and
+            'voltage' and must be strings.
+            Everything else will return a KeyError exception
+
+        '''
+        assert kwargs
+        assert len(kwargs) == 2
+        for value in kwargs.values(): assert isinstance(value, (int, float))
+        for key in kwargs.keys(): assert isinstance(key, (str))
+
+        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
+            value = float(kwargs['charge']) / kwargs['capacitance']
+        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
+            value = float(kwargs['charge']) / kwargs['voltage']
+        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
+            value = float(kwargs['capacitance']) * kwargs['voltage']
+
+        return value
+
+    @classmethod
+    def chargeEqEng(cls, **kwargs):
+        '''
+            Computes the relation between electric charge, capacitance and voltage
+            at the terminals of a capacitor and returns the value formatted in
+            enginnering Notation using the correspondent unit
+
+            The keys must be strings and the values must be integers or floats
+            Everything else will return an Assertion error
+
+            The keys must be two of the following: 'charge', 'capacitance' and
+            'voltage' and must be strings.
+            Everything else will return a KeyError exception
+
+        '''
+        assert kwargs
+        assert len(kwargs) == 2
+        for value in kwargs.values(): assert isinstance(value, (int, float))
+        for key in kwargs.keys(): assert isinstance(key, (str))
+
+        if 'charge' in kwargs.keys() and 'capacitance' in kwargs.keys():      # returns Voltage
+            value = float(kwargs['charge']) / kwargs['capacitance']
+            unit = 'V'
+        elif 'charge' in kwargs.keys() and 'voltage' in kwargs.keys():        # returns Capacitance
+            value = float(kwargs['charge']) / kwargs['voltage']
+            unit = capacitor.__UNIT
+        elif 'capacitance' in kwargs.keys() and 'voltage' in kwargs.keys():   # returns charge
+            value = float(kwargs['capacitance']) * kwargs['voltage']
+            unit = 'C'
+
+        return engineerNotation(value, unit)
+
 
 
 class InvalidCapacitor(ValueError, TypeError):

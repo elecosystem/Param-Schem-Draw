@@ -19,7 +19,7 @@ from structure_dealer import *
 
 class circuit(object):
     __NODE_NUM = 0
-    __CURRENT_NODE = None
+    ##__NODE_HEAD = None
 
     def __init__(self, name):
         assert isinstance(name, str), "The name must be a string"
@@ -27,8 +27,9 @@ class circuit(object):
 
         self._name = name
 
-        circuit.__CURRENT_NODE = add_gnd_node()
         self._schematic = schem.Drawing()
+
+        self._NODE_HEAD = gnd_node()
         self._schematic.add( e.GND )
 
     def draw(self, show=False):
@@ -39,17 +40,38 @@ class circuit(object):
 
         return filename
 
+    def add(self, func, *args, **kwargs):
+        '''
+            Add something to the circuit
+            Can be a component, a mesh, a node or a terminal I/O
+        '''
+        temp = func(*args)
+
+        # Add Schematic  to mesh
+        # self.schematic =
+
+        # update Node Head
+        self._NODE_HEAD = temp
+
+
+
+
     def add_component(self, component, direction="", reverse='False'):
         #assert isinstance(finish_node, (node, None)) , "The finish_node must be a valid node or be empty"
         temp_mesh = add_mesh()
         temp_node = node()
         end_node  = add_node(temp_node)
         print(type(temp_mesh))
-        print(type(circuit.__CURRENT_NODE))
+        print(type(circuit.__NODE_HEAD))
         print(type(end_node))
-        link_mesh(circuit.__CURRENT_NODE, end_node, temp_mesh)
-        circuit.__CURRENT_NODE = end_node
+        link_mesh(circuit.__NODE_HEAD, end_node, temp_mesh)
+        circuit.__NODE_HEAD = end_node
 
         add_component_to_mesh(temp_mesh, component)
-        
+
         self._schematic.add(component.schematic(), d=direction, reverse=reverse, label=component.label)
+
+
+        #@schematic.setter
+        #def schematic(self, element, **kwargs):
+        #    self._schematic.add(element, **kwargs)

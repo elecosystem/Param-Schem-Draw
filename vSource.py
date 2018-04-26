@@ -1,4 +1,11 @@
 '''
+            ____
+    __   __/ ___|  ___  _   _ _ __ ___ ___
+    \ \ / /\___ \ / _ \| | | | '__/ __/ _ \
+     \ V /  ___) | (_) | |_| | | | (_|  __/
+      \_/  |____/ \___/ \__,_|_|  \___\___|
+
+
     Voltage Source module for ParamSchemDraw
 
     A set of classes and methods to ease the drawing and manipulation of voltage
