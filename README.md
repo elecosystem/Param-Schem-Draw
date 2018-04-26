@@ -39,6 +39,4 @@ This project was later integrated in [SIACUA](http://siacua.web.ua.pt/). SIACUA 
 
 ELE - Electronics Learning Ecosystem
 
-Author: Pedro Martins
-
 version: 0.1.3
