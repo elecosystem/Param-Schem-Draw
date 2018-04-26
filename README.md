@@ -32,8 +32,13 @@ This tool started to cover the needs of a Electronic Learning Ecosystem, being d
 This project was later integrated in [SIACUA](http://siacua.web.ua.pt/). SIACUA is an autonomous learning ecosystem being developed by a group of teachers (and now students) at [Aveiro University](https://www.ua.pt/), providing video-classes, exercises and theorical content.
 
 
+
+
 ---
 
+
 ELE - Electronics Learning Ecosystem
+
 Author: Pedro Martins
+
 version: 0.1.3
